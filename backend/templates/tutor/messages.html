@@ -1,0 +1,126 @@
+{% extends "tutor/base.html" %}
+
+{% block title %}Messages - Espace Tuteur{% endblock %}
+
+{% block content %}
+<header class="tutor-topbar">
+    <div>
+        <h1>Messages</h1>
+        <p>Discutez avec les etudiants inscrits a vos sessions.</p>
+    </div>
+
+    <div class="tutor-topbar-actions">
+        <a href="{% url 'tutor_sessions' %}" class="student-mode-btn">
+            <i class="fa-solid fa-calendar-check"></i>
+            Sessions
+        </a>
+    </div>
+</header>
+
+<section class="messages-page">
+    <div class="conversations-panel">
+        <div class="messages-card-header">
+            <div>
+                <h2>Conversations</h2>
+                <p>{{ conversations|length }} session(s)</p>
+            </div>
+        </div>
+
+        <div class="conversation-list">
+            {% for conversation in conversations %}
+                <a href="{% url 'tutor_session_messages' conversation.session.id %}" class="conversation-item {% if selected_session and selected_session.id == conversation.session.id %}active{% endif %}">
+                    <div class="conversation-avatar blue">
+                        {{ conversation.user.first_name|first|default:conversation.user.username|first|upper }}
+                    </div>
+                    <div class="conversation-info">
+                        <div class="conversation-top">
+                            <h3>{{ conversation.user.get_full_name|default:conversation.user.username }}</h3>
+                            <span>
+                                {% if conversation.last_message %}
+                                    {{ conversation.last_message.timestamp|date:"d/m H:i" }}
+                                {% else %}
+                                    {{ conversation.session.start_datetime|date:"d/m" }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <p>
+                            {% if conversation.last_message %}
+                                {{ conversation.last_message.content|truncatechars:60 }}
+                            {% else %}
+                                {{ conversation.session.subject.name }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% if conversation.unread_count %}
+                        <span class="unread-badge">{{ conversation.unread_count }}</span>
+                    {% endif %}
+                </a>
+            {% empty %}
+                <div class="tutor-empty-state wide">
+                    <i class="fa-regular fa-message"></i>
+                    <p>Aucune session reservee pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="chat-panel">
+        {% if selected_session %}
+            <div class="chat-header">
+                <div class="chat-user">
+                    <div class="chat-avatar blue">{{ other_user.first_name|first|default:other_user.username|first|upper }}</div>
+                    <div>
+                        <h2>{{ other_user.get_full_name|default:other_user.username }}</h2>
+                        <p><span class="online-dot"></span>{{ unread_messages_count }} message(s) non lu(s)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="session-context">
+                <div class="session-context-icon">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <div>
+                    <h3>{{ selected_session.subject.name }}</h3>
+                    <p>{{ selected_session.start_datetime|date:"d/m/Y H:i" }} - {{ selected_session.end_datetime|date:"H:i" }} · {{ selected_session.location|default:"Lieu a confirmer" }}</p>
+                </div>
+                <span class="tutor-session-status {{ selected_session.status }}">{{ selected_session.get_status_display }}</span>
+            </div>
+
+            <div class="chat-body">
+                {% for message in messages_list %}
+                    <div class="message-row {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                        {% if message.sender != request.user %}
+                            <div class="message-avatar blue">
+                                {{ message.sender.first_name|first|default:message.sender.username|first|upper }}
+                            </div>
+                        {% endif %}
+                        <div class="message-bubble">
+                            <p>{{ message.content }}</p>
+                            <span>{{ message.timestamp|date:"d/m/Y H:i" }}</span>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="tutor-empty-state wide">
+                        <i class="fa-regular fa-message"></i>
+                        <p>Aucun message dans cette conversation.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <form method="post" class="chat-form">
+                {% csrf_token %}
+                <input type="text" name="content" placeholder="Ecrire un message..." autocomplete="off" required>
+                <button type="submit" class="send-btn" aria-label="Envoyer">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        {% else %}
+            <div class="tutor-empty-state wide">
+                <i class="fa-regular fa-message"></i>
+                <p>Une conversation apparaitra des qu'un etudiant reserve une session.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

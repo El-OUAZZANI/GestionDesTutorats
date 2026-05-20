@@ -1,0 +1,193 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion - GestionDesTutorats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="login-page">
+
+    <!-- ================= PARTIE GAUCHE ================= -->
+    <section class="login-left">
+
+        <div class="overlay"></div>
+
+        <div class="left-content">
+
+            <a href="{% url 'home' %}" class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div>
+                    <h2>GestionDesTutorats</h2>
+                    <p>Plateforme universitaire</p>
+                </div>
+            </a>
+
+            <div class="left-text">
+                <div class="line"></div>
+
+                <h1>
+                    Bienvenue sur votre <br>
+                    plateforme de tutorat
+                </h1>
+
+                <p>
+                    Connectez-vous pour rechercher un tuteur, suivre vos sessions,
+                    gérer vos disponibilités et communiquer avec les autres étudiants.
+                </p>
+            </div>
+
+            <div class="left-footer">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Plateforme sécurisée et encadrée par l’administration de l’école.</span>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= PARTIE DROITE ================= -->
+    <section class="login-right">
+
+        <div class="login-card">
+
+            <div class="mobile-logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>GestionDesTutorats</span>
+            </div>
+
+            <div class="login-header">
+                <h1>Connexion</h1>
+                <p>Accédez à votre espace personnel</p>
+            </div>
+
+            <!-- Messages Django : erreur / succès -->
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="POST" class="login-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="email">Email institutionnel</label>
+
+                    <div class="input-box">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="prenom.nom@emsi.ma"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+
+                    <div class="input-box">
+                        <i class="fa-solid fa-lock"></i>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Votre mot de passe"
+                            required
+                        >
+
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember">
+                        <input type="checkbox" name="remember">
+                        <span>Se souvenir de moi</span>
+                    </label>
+
+                    <a href="#" class="forgot-link">Mot de passe oublié ?</a>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    Se connecter
+                </button>
+
+                <a href="{% url 'admin_login' %}" class="admin-space-link">
+                    <i class="fa-solid fa-user-shield"></i>
+                    Espace admin 
+                </a>
+
+            </form>
+
+            <div class="separator">
+                <span></span>
+                <p>ou</p>
+                <span></span>
+            </div>
+
+            <div class="admin-note">
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>
+                    Vous n’avez pas de compte ?
+                    Contactez l’administration de votre école.
+                </p>
+            </div>
+
+            <a href="{% url 'home' %}" class="back-home">
+                <i class="fa-solid fa-arrow-left"></i>
+                Retour à l’accueil
+            </a>
+
+        </div>
+
+    </section>
+
+</div>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const eyeIcon = document.getElementById("eyeIcon");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    }
+</script>
+
+</body>
+</html>

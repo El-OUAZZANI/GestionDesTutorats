@@ -1,0 +1,145 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion admin - GestionDesTutorats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="login-page admin-login-page">
+
+    <section class="login-left">
+        <div class="overlay"></div>
+
+        <div class="left-content">
+            <a href="{% url 'home' %}" class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+
+                <div>
+                    <h2>GestionDesTutorats</h2>
+                    <p>Espace administrateur</p>
+                </div>
+            </a>
+
+            <div class="left-text">
+                <div class="line"></div>
+
+                <h1>
+                    Gestion de la <br>
+                    plateforme
+                </h1>
+
+                <p>
+                    Connectez-vous pour gérer les étudiants, les demandes de tutorat,
+                    les tuteurs et les matières de la plateforme.
+                </p>
+            </div>
+
+            <div class="left-footer">
+                <i class="fa-solid fa-lock"></i>
+                <span>Accès réservé aux administrateurs applicatifs.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="login-right">
+        <div class="login-card">
+
+            <div class="mobile-logo">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>GestionDesTutorats</span>
+            </div>
+
+            <div class="login-header">
+                <h1>Connexion admin</h1>
+                <p>Accédez à l'espace d'administration du projet</p>
+            </div>
+
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="POST" class="login-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="email">Email administrateur</label>
+                    <div class="input-box">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder="admin@app.ma" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <div class="input-box">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Votre mot de passe" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    Se connecter à l'espace admin
+                </button>
+
+                <a href="{% url 'login' %}" class="admin-space-link">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    Connexion étudiant
+                </a>
+            </form>
+
+            <div class="admin-note">
+                <i class="fa-solid fa-circle-info"></i>
+                <p>
+                    Les comptes Django admin doivent se connecter depuis
+                    <strong>/django-admin/</strong>.
+                </p>
+            </div>
+
+            <a href="{% url 'home' %}" class="back-home">
+                <i class="fa-solid fa-arrow-left"></i>
+                Retour à l'accueil
+            </a>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const eyeIcon = document.getElementById("eyeIcon");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    }
+</script>
+
+</body>
+</html>

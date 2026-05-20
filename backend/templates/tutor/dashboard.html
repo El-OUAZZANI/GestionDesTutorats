@@ -1,0 +1,219 @@
+{% extends "tutor/base.html" %}
+
+{% block title %}
+Dashboard Tuteur - GestionDesTutorats
+{% endblock %}
+
+{% block tutor_nav_dashboard %}active{% endblock %}
+
+{% block content %}
+
+<header class="tutor-topbar">
+    <div>
+        <h1>Bonjour, {{ request.user.get_full_name|default:request.user.username }}</h1>
+        <p>Voici un aperçu de votre activité en tant que tuteur.</p>
+    </div>
+
+    <div class="tutor-topbar-actions">
+        <a href="{% url 'student_dashboard' %}" class="student-mode-btn">
+            <i class="fa-solid fa-user-graduate"></i>
+            Espace étudiant
+        </a>
+
+        <div class="tutor-user-avatar">
+            {{ request.user.first_name|first|default:"T" }}
+        </div>
+    </div>
+</header>
+
+<section class="tutor-stats-grid">
+    <div class="tutor-stat-card">
+        <div class="tutor-stat-icon orange">
+            <i class="fa-solid fa-calendar-check"></i>
+        </div>
+        <div>
+            <p>Créneaux réservés</p>
+            <h2>{{ reserved_count }}</h2>
+        </div>
+    </div>
+
+    <div class="tutor-stat-card">
+        <div class="tutor-stat-icon blue">
+            <i class="fa-solid fa-calendar-check"></i>
+        </div>
+        <div>
+            <p>Sessions confirmées</p>
+            <h2>{{ confirmed_count }}</h2>
+        </div>
+    </div>
+
+    <div class="tutor-stat-card">
+        <div class="tutor-stat-icon green">
+            <i class="fa-solid fa-clock"></i>
+        </div>
+        <div>
+            <p>Créneaux disponibles</p>
+            <h2>{{ availability_count }}</h2>
+        </div>
+    </div>
+
+    <div class="tutor-stat-card">
+        <div class="tutor-stat-icon purple">
+            <i class="fa-solid fa-book-open"></i>
+        </div>
+        <div>
+            <p>Matières enseignées</p>
+            <h2>{{ subjects_count }}</h2>
+        </div>
+    </div>
+</section>
+
+<section class="tutor-content-grid">
+    <div class="tutor-left-column">
+        <div class="tutor-card">
+            <div class="tutor-card-header">
+                <div>
+                    <h2>Créneaux disponibles</h2>
+                    <p>Les séances visibles par les étudiants de votre filière et de votre niveau.</p>
+                </div>
+
+                <a href="{% url 'tutor_sessions' %}" class="tutor-see-all">Voir tout</a>
+            </div>
+
+            <div class="tutor-request-list">
+                {% for availability in available_slots %}
+                    <div class="tutor-request-item">
+                        <div class="request-avatar blue">{{ availability.date|date:"d" }}</div>
+
+                        <div class="request-info">
+                            <h3>Créneau prêt à réserver</h3>
+                            <p>
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ availability.room.name }}
+                            </p>
+                            <p>
+                                <i class="fa-solid fa-clock"></i>
+                                {{ availability.date|date:"d/m/Y" }} · {{ availability.start_time|time:"H:i" }} - {{ availability.end_time|time:"H:i" }}
+                            </p>
+                        </div>
+
+                        <div class="request-actions">
+                            <span class="accept-btn">Disponible</span>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="tutor-empty-state">
+                        <i class="fa-regular fa-calendar"></i>
+                        <p>Aucun créneau avec salle disponible pour le moment.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="tutor-card">
+            <div class="tutor-card-header">
+                <div>
+                    <h2>Prochaines sessions à tutorer</h2>
+                    <p>Vos séances confirmées avec les étudiants.</p>
+                </div>
+
+                <a href="{% url 'tutor_sessions' %}" class="tutor-see-all">Voir tout</a>
+            </div>
+
+            <div class="tutor-session-list">
+                {% for session in upcoming_sessions %}
+                    <div class="tutor-session-item">
+                        <div class="tutor-session-date">
+                            <strong>{{ session.start_datetime|date:"d" }}</strong>
+                            <span>{{ session.start_datetime|date:"M" }}</span>
+                        </div>
+
+                        <div class="tutor-session-info">
+                            <h3>{{ session.subject.name }}</h3>
+                            <p>
+                                <i class="fa-solid fa-user-graduate"></i>
+                                Étudiant : {{ session.student.get_full_name|default:session.student.username }}
+                            </p>
+                            <p>
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ session.location|default:"Lieu à préciser" }} · {{ session.start_datetime|date:"H:i" }} - {{ session.end_datetime|date:"H:i" }}
+                            </p>
+                        </div>
+
+                        <span class="tutor-badge confirmed">{{ session.get_status_display }}</span>
+                    </div>
+                {% empty %}
+                    <div class="tutor-empty-state">
+                        <i class="fa-regular fa-calendar"></i>
+                        <p>Aucune session confirmée à venir.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="tutor-right-column">
+        <div class="tutor-card">
+            <div class="tutor-card-header">
+                <div>
+                    <h2>Actions rapides</h2>
+                    <p>Gérez rapidement votre espace tuteur.</p>
+                </div>
+            </div>
+
+            <div class="tutor-quick-actions">
+                <a href="{% url 'tutor_availabilities' %}" class="tutor-quick-card">
+                    <div class="tutor-quick-icon green">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <h3>Ajouter disponibilité</h3>
+                    <p>Créez un nouveau créneau disponible.</p>
+                </a>
+
+                <a href="{% url 'tutor_subjects' %}" class="tutor-quick-card">
+                    <div class="tutor-quick-icon purple">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3>Gérer mes matières</h3>
+                    <p>Choisissez les matières à enseigner.</p>
+                </a>
+
+                <a href="{% url 'tutor_calendar' %}" class="tutor-quick-card">
+                    <div class="tutor-quick-icon blue">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+                    <h3>Voir calendrier</h3>
+                    <p>Consultez vos créneaux et séances.</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="tutor-card">
+            <div class="tutor-card-header">
+                <div>
+                    <h2>Matières enseignées</h2>
+                    <p>Vos matières actuellement disponibles.</p>
+                </div>
+            </div>
+
+            <div class="tutor-subject-list">
+                {% for subject in subjects %}
+                    <div class="tutor-subject-item">
+                        <div>
+                            <h3>{{ subject.name }}</h3>
+                            <p>{{ subject.study_year }} · {{ subject.department }}</p>
+                        </div>
+                        <span class="subject-level advanced">Actif</span>
+                    </div>
+                {% empty %}
+                    <div class="tutor-empty-state">
+                        <i class="fa-solid fa-book-open"></i>
+                        <p>Aucune matière choisie. Ajoutez vos matières pour être visible.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

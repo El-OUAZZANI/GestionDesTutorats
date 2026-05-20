@@ -1,0 +1,211 @@
+{% extends "student/base.html" %}
+
+{% block title %}
+Mon profil - GestionDesTutorats
+{% endblock %}
+
+{% block nav_profile %}active{% endblock %}
+
+{% block content %}
+
+<!-- ================= TOPBAR ================= -->
+<header class="topbar">
+
+    <div>
+        <h1>Mon profil</h1>
+        <p>Consultez et gérez vos informations personnelles et académiques.</p>
+    </div>
+
+    <div class="topbar-actions">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Rechercher...">
+        </div>
+
+        <button class="notification-btn" type="button">
+            <i class="fa-regular fa-bell"></i>
+            <span></span>
+        </button>
+
+        <div class="user-avatar">
+            {{ request.user.first_name|first|default:"E" }}
+        </div>
+    </div>
+
+</header>
+
+
+<!-- ================= PROFILE PAGE ================= -->
+<section class="profile-page">
+
+    <!-- LEFT COLUMN -->
+    <div class="profile-left">
+
+        <!-- PROFILE CARD -->
+        <div class="profile-main-card">
+
+            <div class="profile-cover"></div>
+
+            <div class="profile-content">
+
+                <div class="profile-avatar-large">
+                    {{ request.user.first_name|first|default:"E" }}
+                </div>
+
+                <h2>{{ request.user.first_name|default:"Étudiant" }} {{ request.user.last_name|default:"Test" }}</h2>
+
+                <p class="profile-email">
+                    <i class="fa-regular fa-envelope"></i>
+                    {{ request.user.email|default:"etudiant@test.com" }}
+                </p>
+
+                <div class="profile-badges">
+                    <span class="profile-badge student">
+                        <i class="fa-solid fa-user-graduate"></i>
+                        Étudiant
+                    </span>
+
+                    {% if request.user.profile.is_tutor %}
+                        <span class="profile-badge student">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            Mode tuteur activé
+                        </span>
+                    {% else %}
+                        <span class="profile-badge inactive-tutor">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            Mode tuteur désactivé
+                        </span>
+                    {% endif %}
+                </div>
+
+                <p class="profile-bio">
+                    Étudiant motivé souhaitant progresser grâce à l’entraide et au tutorat entre étudiants.
+                    Vous pouvez compléter votre bio pour mieux présenter votre profil.
+                </p>
+
+                <a class="edit-profile-btn" href="{% url 'student_contact_admin' %}">
+                    
+                    Contacter l’administrateur
+                </a>
+
+            </div>
+
+        </div>
+
+
+        {% if not request.user.profile.is_tutor %}
+        <!-- TUTOR MODE CARD -->
+        <div class="activate-tutor-card">
+
+            <div class="activate-icon">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+
+            <div>
+                <h3>Activer le mode tuteur</h3>
+                <p>
+                    Si vous maîtrisez une ou plusieurs matières, vous pouvez devenir tuteur
+                    et aider vos camarades à progresser.
+                </p>
+            </div>
+
+            <form method="post" action="{% url 'activate_tutor_mode' %}" class="activate-tutor-form">
+                {% csrf_token %}
+                <button type="submit" class="activate-tutor-btn">
+                    Activer
+                </button>
+            </form>
+
+        </div>
+        {% endif %}
+
+    </div>
+
+
+    <!-- RIGHT COLUMN -->
+    <div class="profile-right">
+
+        <!-- PERSONAL INFO -->
+        <div class="profile-section-card">
+
+            <div class="profile-section-header">
+                <div>
+                    <h2>Informations personnelles</h2>
+                    <p>Vos informations principales liées à votre compte étudiant.</p>
+                </div>
+
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <span>Nom</span>
+                    <strong>{{ request.user.last_name|default:"Test" }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Prénom</span>
+                    <strong>{{ request.user.first_name|default:"Étudiant" }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Email institutionnel</span>
+                    <strong>{{ request.user.email|default:"etudiant@test.com" }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Statut du compte</span>
+                    <strong class="status-active">Actif</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACADEMIC INFO -->
+        <div class="profile-section-card">
+
+            <div class="profile-section-header">
+                <div>
+                    <h2>Informations académiques</h2>
+                    <p>Votre filière, niveau et informations scolaires.</p>
+                </div>
+
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <span>Filière</span>
+                    <strong>{{ request.user.profile.department|default:"Non renseignée" }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Année d’étude</span>
+                    <strong>{{ request.user.profile.study_year|default:"Non renseignée" }}</strong>
+                </div>
+
+                <div class="info-item">
+                    <span>École</span>
+                    <strong>EMSI</strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Campus</span>
+                    <strong>Casablanca</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        
+
+
+        
+
+</section>
+
+{% endblock %}

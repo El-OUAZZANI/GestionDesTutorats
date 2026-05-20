@@ -1,0 +1,87 @@
+{% extends "student/base.html" %}
+
+{% block title %}Notifications - GestionDesTutorats{% endblock %}
+{% block nav_notifications %}active{% endblock %}
+
+{% block content %}
+<header class="topbar">
+    <div>
+        <h1>Notifications</h1>
+        <p>Suivez les demandes, confirmations, messages et rappels liés à vos séances.</p>
+    </div>
+
+    <div class="topbar-actions">
+        <form method="post" action="{% url 'mark_notifications_read' %}">
+            {% csrf_token %}
+            <button class="mark-read-btn" type="submit">
+                <i class="fa-solid fa-check-double"></i>
+                Tout marquer comme lu
+            </button>
+        </form>
+    </div>
+</header>
+
+<section class="notifications-page">
+    <div class="notification-stats-grid">
+        <div class="notif-stat-card">
+            <div class="notif-stat-icon blue"><i class="fa-solid fa-bell"></i></div>
+            <div><p>Total notifications</p><h2>{{ total_notifications }}</h2></div>
+        </div>
+        <div class="notif-stat-card">
+            <div class="notif-stat-icon red"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div><p>Non lues</p><h2>{{ unread_notifications }}</h2></div>
+        </div>
+        <div class="notif-stat-card">
+            <div class="notif-stat-icon green"><i class="fa-solid fa-calendar-check"></i></div>
+            <div><p>Sessions</p><h2>{{ session_notifications }}</h2></div>
+        </div>
+        <div class="notif-stat-card">
+            <div class="notif-stat-icon purple"><i class="fa-solid fa-message"></i></div>
+            <div><p>Messages</p><h2>{{ message_notifications }}</h2></div>
+        </div>
+    </div>
+
+    <div class="notifications-card">
+        <div class="notifications-header">
+            <div>
+                <h2>Centre de notifications</h2>
+                <p>Liste des dernières alertes reçues sur votre espace étudiant.</p>
+            </div>
+        </div>
+
+        <div class="notifications-list">
+            {% for notification in notifications %}
+                <div class="notification-row {% if not notification.is_read %}unread{% endif %}">
+                    <div class="notification-left">
+                        <div class="notification-type-icon {% if notification.notification_type == 'success' %}green{% elif notification.notification_type == 'warning' %}orange{% elif notification.notification_type == 'message' %}purple{% else %}blue{% endif %}">
+                            <i class="fa-solid {% if notification.notification_type == 'success' %}fa-check{% elif notification.notification_type == 'warning' %}fa-clock{% elif notification.notification_type == 'message' %}fa-message{% else %}fa-bell{% endif %}"></i>
+                        </div>
+
+                        <div class="notification-content">
+                            <div class="notification-title-line">
+                                <h3>{{ notification.title }}</h3>
+                                {% if not notification.is_read %}<span class="unread-dot"></span>{% endif %}
+                            </div>
+                            <p>{{ notification.content }}</p>
+                            <div class="notification-meta">
+                                <span><i class="fa-regular fa-clock"></i> {{ notification.created_at|date:"d/m/Y H:i" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if notification.url %}
+                        <div class="notification-actions">
+                            <a href="{{ notification.url }}" class="notif-action-btn primary">Ouvrir</a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <div class="dashboard-empty">
+                    <i class="fa-regular fa-bell"></i>
+                    <p>Aucune notification pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

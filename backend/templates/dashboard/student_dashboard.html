@@ -1,0 +1,406 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Étudiant - GestionDesTutorats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="student-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="logo-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+
+            <div>
+                <h2>GestionDesTutorats</h2>
+                <p>Espace étudiant</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="#" class="active">
+                <i class="fa-solid fa-house"></i>
+                <span>Tableau de bord</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Rechercher une matière</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Mes sessions</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-message"></i>
+                <span>Messages</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-bell"></i>
+                <span>Notifications</span>
+            </a>
+
+            <a href="#">
+                <i class="fa-solid fa-user"></i>
+                <span>Mon profil</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-tutor-card">
+            <div class="tutor-icon">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+
+            <h3>Devenir tuteur</h3>
+            <p>Partagez vos connaissances avec d’autres étudiants.</p>
+
+            <a href="#" class="sidebar-btn">
+                Activer
+            </a>
+        </div>
+
+        <a href="{% url 'logout' %}" class="logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Déconnexion
+        </a>
+
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div>
+                <h1>Bonjour, {{ request.user.get_full_name|default:request.user.username }} 👋</h1>
+                <p>Voici un aperçu de vos activités sur la plateforme.</p>
+            </div>
+
+            <div class="topbar-actions">
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Rechercher une matière...">
+                </div>
+
+                <button class="notification-btn">
+                    <i class="fa-regular fa-bell"></i>
+                    <span></span>
+                </button>
+
+                <div class="user-avatar">
+                    {{ request.user.first_name|first|default:"E" }}
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- STATS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+
+                <div>
+                    <p>Sessions à venir</p>
+                    <h2>3</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+
+                <div>
+                    <p>Demandes en attente</p>
+                    <h2>2</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+                <div>
+                    <p>Sessions terminées</p>
+                    <h2>8</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fa-solid fa-message"></i>
+                </div>
+
+                <div>
+                    <p>Messages non lus</p>
+                    <h2>5</h2>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- CONTENT GRID -->
+        <section class="content-grid">
+
+            <!-- LEFT COLUMN -->
+            <div class="left-column">
+
+                <!-- QUICK ACTIONS -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Actions rapides</h2>
+                            <p>Accédez rapidement aux fonctionnalités principales.</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <a href="#" class="quick-card">
+                            <div class="quick-icon blue">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <h3>Rechercher une matière</h3>
+                            <p>Trouvez un créneau selon votre matière, votre filière et votre niveau.</p>
+                        </a>
+
+                        <a href="#" class="quick-card">
+                            <div class="quick-icon green">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <h3>Mes sessions</h3>
+                            <p>Consultez vos séances à venir.</p>
+                        </a>
+
+                        <a href="#" class="quick-card">
+                            <div class="quick-icon purple">
+                                <i class="fa-solid fa-user-pen"></i>
+                            </div>
+                            <h3>Modifier profil</h3>
+                            <p>Mettez à jour vos informations.</p>
+                        </a>
+
+                    </div>
+                </div>
+
+                <!-- UPCOMING SESSIONS -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Prochaines sessions</h2>
+                            <p>Vos séances programmées prochainement.</p>
+                        </div>
+
+                        <a href="#" class="see-all">Voir tout</a>
+                    </div>
+
+                    <div class="session-list">
+
+                        <div class="session-item">
+                            <div class="session-date">
+                                <strong>18</strong>
+                                <span>Mai</span>
+                            </div>
+
+                            <div class="session-info">
+                                <h3>Programmation Python</h3>
+
+                                <p>
+                                    <i class="fa-solid fa-user"></i>
+                                    Tuteur : Ahmed Benali
+                                </p>
+
+                                <p>
+                                    <i class="fa-solid fa-clock"></i>
+                                    10:00 - 12:00
+                                </p>
+                            </div>
+
+                            <span class="badge confirmed">Confirmée</span>
+                        </div>
+
+                        <div class="session-item">
+                            <div class="session-date">
+                                <strong>21</strong>
+                                <span>Mai</span>
+                            </div>
+
+                            <div class="session-info">
+                                <h3>Java Orienté Objet</h3>
+
+                                <p>
+                                    <i class="fa-solid fa-user"></i>
+                                    Tuteur : Sara El Amrani
+                                </p>
+
+                                <p>
+                                    <i class="fa-solid fa-clock"></i>
+                                    14:00 - 15:30
+                                </p>
+                            </div>
+
+                            <span class="badge pending">En attente</span>
+                        </div>
+
+                        <div class="session-item">
+                            <div class="session-date">
+                                <strong>24</strong>
+                                <span>Mai</span>
+                            </div>
+
+                            <div class="session-info">
+                                <h3>Mathématiques</h3>
+
+                                <p>
+                                    <i class="fa-solid fa-user"></i>
+                                    Tuteur : Yassine K.
+                                </p>
+
+                                <p>
+                                    <i class="fa-solid fa-clock"></i>
+                                    09:00 - 10:30
+                                </p>
+                            </div>
+
+                            <span class="badge confirmed">Confirmée</span>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="right-column">
+
+                <!-- BECOME TUTOR -->
+                <div class="become-tutor-card">
+                    <div class="become-icon">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                    </div>
+
+                    <h2>Vous maîtrisez une matière ?</h2>
+
+                    <p>
+                        Activez le mode tuteur et aidez vos camarades
+                        à progresser dans leurs études.
+                    </p>
+
+                    <a href="#" class="become-btn">
+                        Activer le mode tuteur
+                    </a>
+                </div>
+
+                <!-- NOTIFICATIONS -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Notifications</h2>
+                            <p>Vos dernières alertes.</p>
+                        </div>
+                    </div>
+
+                    <div class="notification-list">
+
+                        <div class="notification-item unread">
+                            <div class="notif-icon green">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+
+                            <div>
+                                <h4>Session confirmée</h4>
+                                <p>Votre séance Python a été acceptée.</p>
+                                <span>Il y a 5 min</span>
+                            </div>
+                        </div>
+
+                        <div class="notification-item">
+                            <div class="notif-icon orange">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+
+                            <div>
+                                <h4>Demande en attente</h4>
+                                <p>Votre demande Java est en attente.</p>
+                                <span>Il y a 1 h</span>
+                            </div>
+                        </div>
+
+                        <div class="notification-item">
+                            <div class="notif-icon blue">
+                                <i class="fa-solid fa-message"></i>
+                            </div>
+
+                            <div>
+                                <h4>Nouveau message</h4>
+                                <p>Ahmed vous a envoyé un message.</p>
+                                <span>Hier</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- PROFILE COMPLETION -->
+                <div class="card profile-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Profil</h2>
+                            <p>Complétez votre profil étudiant.</p>
+                        </div>
+                    </div>
+
+                    <div class="progress-box">
+                        <div class="progress-text">
+                            <span>Complété</span>
+                            <strong>70%</strong>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div style="width: 70%;"></div>
+                        </div>
+                    </div>
+
+                    <a href="#" class="profile-btn">
+                        Consulter mon profil
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

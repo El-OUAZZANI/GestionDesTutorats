@@ -1,0 +1,70 @@
+{% extends "student/base.html" %}
+
+{% block title %}
+Contacter l'administration - GestionDesTutorats
+{% endblock %}
+
+{% block nav_profile %}active{% endblock %}
+
+{% block content %}
+
+<header class="topbar">
+    <div>
+        <h1>Contacter l'administration</h1>
+        <p>Envoyez une demande directement depuis votre espace etudiant.</p>
+    </div>
+
+    <a href="{% url 'student_profile' %}" class="student-return-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+        Retour
+    </a>
+</header>
+
+<section class="student-contact-page">
+    <div class="student-contact-copy">
+        <span class="student-contact-kicker">
+            <i class="fa-solid fa-headset"></i>
+            Assistance administrative
+        </span>
+
+        <h2>Envoyer une demande</h2>
+        <p>
+            Choisissez le type de demande, expliquez clairement votre besoin,
+            puis l'administration recevra votre message avec votre nom et votre email.
+        </p>
+    </div>
+
+    <div class="student-contact-card">
+        <form class="student-contact-form" method="post" action="{% url 'student_contact_admin' %}">
+            {% csrf_token %}
+
+            <div class="student-form-row">
+                <label for="request_type">Type de demande</label>
+                <select id="request_type" name="request_type" required>
+                    {% for value, label in request_type_choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="student-form-row">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="8" placeholder="Decrivez votre demande..." required></textarea>
+            </div>
+
+            <div class="student-contact-actions">
+                <a href="{% url 'student_profile' %}" class="student-secondary-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Retour
+                </a>
+
+                <button type="submit" class="student-contact-submit">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Envoyer
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}

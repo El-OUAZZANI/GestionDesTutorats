@@ -1,0 +1,81 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Notifications admin - GestionDesTutorats{% endblock %}
+{% block admin_nav_notifications %}active{% endblock %}
+
+{% block content %}
+<header class="admin-topbar">
+    <div>
+        <h1>Notifications</h1>
+        <p>Messages envoyés depuis la page contact admin.</p>
+    </div>
+</header>
+
+<section class="admin-stats notification-stats">
+    <div class="admin-stat-card notification-stat-card purple">
+        <i class="fa-solid fa-bell"></i>
+        <div>
+            <span>Total notifications</span>
+            <strong>{{ total_notifications }}</strong>
+        </div>
+    </div>
+    <div class="admin-stat-card notification-stat-card blue">
+        <i class="fa-solid fa-envelope-open-text"></i>
+        <div>
+            <span>Messages contact</span>
+            <strong>{{ contact_count }}</strong>
+        </div>
+    </div>
+</section>
+
+<section class="admin-card notifications-panel">
+    <div class="admin-card-header">
+        <div>
+            <h2>Messages reçus</h2>
+            <p>Demandes classées de la plus récente à la plus ancienne.</p>
+        </div>
+    </div>
+
+    <div class="notifications-list-admin">
+        {% for contact_message in contact_messages %}
+            <article class="notification-row-admin {% if not contact_message.is_read %}unread{% endif %}">
+                <div class="notification-avatar">
+                    {{ contact_message.full_name|first|upper }}
+                </div>
+
+                <div class="notification-body-admin">
+                    <div class="notification-title-line-admin">
+                        <div>
+                            <h3>{{ contact_message.full_name }}</h3>
+                            <p>
+                                <i class="fa-solid fa-envelope"></i>
+                                {{ contact_message.email }}
+                            </p>
+                        </div>
+                        <div class="notification-badges-admin">
+                            <span class="status-pill neutral">{{ contact_message.get_request_type_display }}</span>
+                            {% if not contact_message.is_read %}
+                                <span class="status-pill pending">Non lu</span>
+                            {% else %}
+                                <span class="status-pill approved">Lu</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="notification-date-admin">
+                        <i class="fa-solid fa-calendar-day"></i>
+                        {{ contact_message.created_at|date:"d/m/Y H:i" }}
+                    </div>
+
+                    <div class="notification-message-admin">
+                        <h4><i class="fa-solid fa-message"></i> Message</h4>
+                        <p>{{ contact_message.message|linebreaksbr }}</p>
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            <p class="empty-state">Aucun message contact pour le moment.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

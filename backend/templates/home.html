@@ -1,0 +1,219 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>GestionDesTutorats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="main-header">
+    <nav class="navbar">
+
+        <a href="{% url 'home' %}" class="logo">
+            <span class="logo-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </span>
+            <span>GestionDes<span>Tutorats</span></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}" class="active">Accueil</a></li>
+            <li><a href="{% url 'about' %}">À propos</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="{% url 'login' %}" class="btn btn-outline">
+                <i class="fa-regular fa-user"></i>
+                Se connecter
+            </a>
+
+            <!-- Comme l'inscription publique n'existe pas, ce bouton peut rediriger vers une page d'information -->
+            <a href="{% url 'contact_admin' %}" class="btn btn-primary">
+                Contact admin
+            </a>
+        </div>
+
+    </nav>
+</header>
+
+<!-- ================= HERO SECTION ================= -->
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="hero-text">
+            <h1>
+                L’excellence par <br>
+                <span>l’entraide étudiante</span>
+            </h1>
+
+            <p>
+                GestionDesTutorats connecte les étudiants pour apprendre,
+                partager et réussir ensemble.
+            </p>
+
+            <div class="hero-buttons">
+                
+
+               
+            </div>
+
+            <div class="hero-features">
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <p>Plateforme sécurisée<br>et de confiance</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <p>Tuteurs qualifiés<br>et vérifiés</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <p>Communauté étudiante<br>solidaire</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="hero-image-box">
+
+            <div class="blue-shape"></div>
+            <div class="dots"></div>
+
+            <div class="floating-card top-card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-user-group"></i>
+                </div>
+                <div>
+                    <strong>Mise en relation</strong>
+                    <p>rapide et efficace</p>
+                </div>
+            </div>
+
+            <img src="{% static 'images/imageshero-students.png' %}" alt="Étudiants en tutorat">
+
+            <div class="rating-card">
+                <div class="rating-icon">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <div class="stars">
+                    <span>★★★★★</span>
+                    <strong>4.9/5</strong>
+                    <p>Basé sur 1200+ avis</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="steps-section">
+
+    <div class="section-heading">
+        <span>COMMENT ÇA MARCHE ?</span>
+        <h2>4 étapes simples pour réussir ensemble</h2>
+        <div class="small-line"></div>
+    </div>
+
+    <div class="steps-container">
+
+        <div class="step-card">
+            <div class="step-top">
+                <div class="step-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <span class="step-number">01</span>
+            </div>
+            <h3>Trouvez votre tuteur</h3>
+            <p>
+                Recherchez un tuteur selon la matière,
+                le niveau, la disponibilité et les avis.
+            </p>
+        </div>
+
+        <div class="step-arrow">
+            <i class="fa-solid fa-arrow-right"></i>
+        </div>
+
+        <div class="step-card">
+            <div class="step-top">
+                <div class="step-icon">
+                    <i class="fa-solid fa-comment-dots"></i>
+                </div>
+                <span class="step-number">02</span>
+            </div>
+            <h3>Échangez et planifiez</h3>
+            <p>
+                Discutez avec votre tuteur et planifiez
+                vos sessions en toute simplicité.
+            </p>
+        </div>
+
+        <div class="step-arrow">
+            <i class="fa-solid fa-arrow-right"></i>
+        </div>
+
+        <div class="step-card">
+            <div class="step-top">
+                <div class="step-icon">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+                <span class="step-number">03</span>
+            </div>
+            <h3>Apprenez et progressez</h3>
+            <p>
+                Participez à vos sessions et progressez
+                à votre rythme avec un suivi personnalisé.
+            </p>
+        </div>
+
+        <div class="step-arrow">
+            <i class="fa-solid fa-arrow-right"></i>
+        </div>
+
+        <div class="step-card">
+            <div class="step-top">
+                <div class="step-icon">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <span class="step-number">04</span>
+            </div>
+            <h3>Atteignez vos objectifs</h3>
+            <p>
+                Gagnez en confiance, améliorez vos
+                résultats et réalisez vos ambitions.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Tuteurs - GestionDesTutorats{% endblock %}
+{% block admin_nav_tutors %}active{% endblock %}
+
+{% block content %}
+<header class="admin-topbar">
+    <div>
+        <h1>Tuteurs actifs</h1>
+        <p>Liste des étudiants dont le mode tuteur est activé.</p>
+    </div>
+</header>
+
+<section class="admin-card">
+    <div class="admin-list">
+        {% for tutor in tutors %}
+            <div class="admin-list-row">
+                <div>
+                    <strong>{{ tutor.get_full_name|default:tutor.username }}</strong>
+                    <span>{{ tutor.email }} - {{ tutor.profile.department|default:"Filière non renseignée" }}</span>
+                </div>
+                <span class="status-pill approved">Tuteur</span>
+            </div>
+        {% empty %}
+            <p class="empty-state">Aucun tuteur actif.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

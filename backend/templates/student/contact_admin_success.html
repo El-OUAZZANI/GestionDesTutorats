@@ -1,0 +1,28 @@
+{% extends "student/base.html" %}
+
+{% block title %}
+Message envoye - GestionDesTutorats
+{% endblock %}
+
+{% block nav_profile %}active{% endblock %}
+
+{% block content %}
+
+<section class="student-contact-success">
+    <div class="student-success-icon">
+        <i class="fa-solid fa-check"></i>
+    </div>
+
+    <h1>Message envoye</h1>
+    <p>
+        Votre message a bien ete envoye a l'administration.
+        Vous recevrez une reponse des que possible.
+    </p>
+
+    <a href="{% url 'student_profile' %}" class="student-contact-submit">
+        <i class="fa-solid fa-arrow-left"></i>
+        Retour au profil
+    </a>
+</section>
+
+{% endblock %}

@@ -1,0 +1,150 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>À propos - GestionDesTutorats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header class="main-header">
+    <nav class="navbar">
+
+        <a href="{% url 'home' %}" class="logo">
+            <span class="logo-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </span>
+            <span>GestionDes<span>Tutorats</span></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Accueil</a></li>
+            <li><a href="{% url 'about' %}" class="active">À propos</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="{% url 'login' %}" class="btn btn-outline">
+                <i class="fa-regular fa-user"></i>
+                Se connecter
+            </a>
+
+            <a href="javascript:history.back()" class="btn btn-primary">
+                <i class="fa-solid fa-arrow-left"></i>
+                Retour
+            </a>
+        </div>
+
+    </nav>
+</header>
+
+<section class="about-hero">
+    <div class="about-hero-content">
+        <div class="about-kicker">
+            <i class="fa-solid fa-circle-info"></i>
+            Plateforme universitaire de tutorat
+        </div>
+
+        <h1>À propos de <span>GestionDesTutorats</span></h1>
+
+        <p>
+            GestionDesTutorats est une plateforme web pensée pour faciliter l'entraide entre étudiants.
+            Elle permet de trouver un tuteur, organiser des séances, suivre les demandes et créer un
+            environnement académique plus collaboratif.
+        </p>
+
+        <div class="about-actions">
+            <a href="{% url 'home' %}" class="btn-hero secondary">
+                <i class="fa-solid fa-house"></i>
+                Accueil
+            </a>
+
+            <a href="{% url 'login' %}" class="btn-hero primary">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Accéder à mon espace
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="about-section">
+    <div class="section-heading">
+        <span>NOTRE OBJECTIF</span>
+        <h2>Rendre le tutorat plus simple, clair et accessible</h2>
+        <div class="small-line"></div>
+    </div>
+
+    <div class="about-grid">
+        <article class="about-card">
+            <div class="about-icon">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <h3>Rechercher facilement</h3>
+            <p>
+                Les étudiants peuvent identifier des tuteurs selon la matière, le niveau,
+                la disponibilité et le mode de séance.
+            </p>
+        </article>
+
+        <article class="about-card">
+            <div class="about-icon">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <h3>Organiser les séances</h3>
+            <p>
+                La plateforme centralise les demandes, les sessions confirmées et les créneaux
+                disponibles pour garder une organisation propre.
+            </p>
+        </article>
+
+        <article class="about-card">
+            <div class="about-icon">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+            <h3>Valoriser les tuteurs</h3>
+            <p>
+                Les étudiants qui maîtrisent une matière peuvent activer le mode tuteur
+                et partager leurs connaissances avec leurs camarades.
+            </p>
+        </article>
+    </div>
+</section>
+
+<section class="about-values">
+    <div class="about-values-content">
+        <div>
+            <span class="about-label">VISION DU PROJET</span>
+            <h2>Une solution académique moderne pour un PFA professionnel</h2>
+            <p>
+                Le projet vise à réunir les fonctionnalités essentielles d'une vraie plateforme:
+                authentification, dashboards, disponibilités, réservations, sessions, messages,
+                notifications et administration.
+            </p>
+        </div>
+
+        <div class="about-list">
+            <div>
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Interface sécurisée et structurée</span>
+            </div>
+            <div>
+                <i class="fa-solid fa-users"></i>
+                <span>Espace étudiant, tuteur et administrateur</span>
+            </div>
+            <div>
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Architecture Django claire et évolutive</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

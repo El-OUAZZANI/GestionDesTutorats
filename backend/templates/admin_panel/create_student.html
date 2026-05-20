@@ -1,0 +1,32 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Ajouter étudiant - GestionDesTutorats{% endblock %}
+{% block admin_nav_students %}active{% endblock %}
+
+{% block content %}
+<header class="admin-topbar">
+    <div>
+        <h1>Ajouter un étudiant</h1>
+        <p>Créez un compte étudiant sans lui donner accès à Django admin.</p>
+    </div>
+</header>
+
+<section class="admin-card form-card">
+    <form method="post" class="admin-form">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="admin-form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="admin-primary-btn">
+            <i class="fa-solid fa-check"></i>
+            Créer le compte
+        </button>
+    </form>
+</section>
+{% endblock %}

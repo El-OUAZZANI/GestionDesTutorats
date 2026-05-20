@@ -1,0 +1,224 @@
+{% extends "student/base.html" %}
+
+{% block title %}
+Dashboard Étudiant - GestionDesTutorats
+{% endblock %}
+
+{% block nav_dashboard %}active{% endblock %}
+
+{% block content %}
+
+{% if profile.is_tutor %}
+<div class="mode-tutor-center">
+    <a href="{% url 'tutor_dashboard' %}" class="mode-tutor-main-btn">
+        <span class="mode-tutor-icon">
+            <i class="fa-solid fa-chalkboard-user"></i>
+        </span>
+        <span>Accéder au mode tuteur</span>
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
+</div>
+{% endif %}
+
+<header class="topbar">
+    <div>
+        <h1>Bonjour, {{ request.user.get_full_name|default:request.user.username }}</h1>
+        <p>Voici un aperçu de vos activités sur la plateforme.</p>
+    </div>
+
+    <div class="topbar-actions">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Rechercher une matière...">
+        </div>
+
+        <a href="{% url 'student_notifications' %}" class="notification-btn">
+            <i class="fa-regular fa-bell"></i>
+            {% if unread_notifications_count %}
+                <span>{{ unread_notifications_count }}</span>
+            {% endif %}
+        </a>
+
+        <div class="user-avatar">
+            {{ request.user.first_name|first|default:"E" }}
+        </div>
+    </div>
+</header>
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fa-solid fa-calendar-days"></i>
+        </div>
+        <div>
+            <p>Sessions à venir</p>
+            <h2>{{ upcoming_sessions_count }}</h2>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+            <p>Sessions terminées</p>
+            <h2>{{ completed_sessions_count }}</h2>
+        </div>
+    </div>
+
+    <a href="{% url 'student_messages' %}" class="stat-card stat-card-link">
+        <div class="stat-icon purple">
+            <i class="fa-solid fa-message"></i>
+        </div>
+        <div>
+            <p>Messages non lus</p>
+            <h2>{{ unread_messages_count }}</h2>
+        </div>
+    </a>
+</section>
+
+<section class="content-grid">
+    <div class="left-column">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2>Actions rapides</h2>
+                    <p>Accédez rapidement aux fonctionnalités principales.</p>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <a href="{% url 'search_tutors' %}" class="quick-card">
+                    <div class="quick-icon blue">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <h3>Rechercher une matière</h3>
+                    <p>Trouvez un créneau avec salle selon votre filière, votre niveau et la matière.</p>
+                </a>
+
+                <a href="{% url 'student_sessions' %}" class="quick-card">
+                    <div class="quick-icon green">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <h3>Mes sessions</h3>
+                    <p>Consultez vos séances à venir, en attente ou terminées.</p>
+                </a>
+
+                <a href="{% url 'student_profile' %}" class="quick-card">
+                    <div class="quick-icon purple">
+                        <i class="fa-solid fa-user-pen"></i>
+                    </div>
+                    <h3>Consulter mon profil</h3>
+                    <p>Mettez à jour vos informations personnelles et académiques.</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2>Prochaines sessions</h2>
+                    <p>Vos séances programmées prochainement.</p>
+                </div>
+
+                <a href="{% url 'student_sessions' %}" class="see-all">Voir tout</a>
+            </div>
+
+            <div class="session-list">
+                {% for session in upcoming_sessions %}
+                    <div class="session-item">
+                        <div class="session-date">
+                            <strong>{{ session.start_datetime|date:"d" }}</strong>
+                            <span>{{ session.start_datetime|date:"M" }}</span>
+                        </div>
+
+                        <div class="session-info">
+                            <h3>{{ session.subject.name }}</h3>
+                            <p>
+                                <i class="fa-solid fa-user"></i>
+                                Tuteur : {{ session.tutor.get_full_name|default:session.tutor.username }}
+                            </p>
+                            <p>
+                                <i class="fa-solid fa-clock"></i>
+                                {{ session.start_datetime|date:"H:i" }} - {{ session.end_datetime|date:"H:i" }}
+                            </p>
+                        </div>
+
+                        <span class="badge {{ session.status }}">{{ session.get_status_display }}</span>
+                    </div>
+                {% empty %}
+                    <div class="dashboard-empty">
+                        <i class="fa-regular fa-calendar"></i>
+                        <p>Aucune session programmée pour le moment.</p>
+                        <a href="{% url 'search_tutors' %}">Rechercher une matière</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="right-column">
+        <div class="become-tutor-card">
+            <div class="become-icon">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+
+            {% if profile.is_tutor %}
+                <h2>Mode tuteur activé</h2>
+                <p>Votre profil tuteur est validé. Vous pouvez gérer vos créneaux, matières et séances.</p>
+                <a href="{% url 'tutor_dashboard' %}" class="become-btn">Accéder au mode tuteur</a>
+            {% elif pending_tutor_application %}
+                <h2>Demande en attente</h2>
+                <p>Votre demande de passage en mode tuteur est en cours de validation par l'administration.</p>
+                <a href="{% url 'tutor_application' %}" class="become-btn">Voir ma demande</a>
+            {% elif latest_application and latest_application.status == "rejected" %}
+                <h2>Demande refusée</h2>
+                <p>Vous pouvez améliorer votre candidature et envoyer une nouvelle demande.</p>
+                <a href="{% url 'tutor_application' %}" class="become-btn">Refaire une demande</a>
+            {% else %}
+                <h2>Vous maîtrisez une matière ?</h2>
+                <p>Proposez votre candidature pour aider vos camarades à progresser.</p>
+                <form method="post" action="{% url 'activate_tutor_mode' %}" class="activate-tutor-form">
+                    {% csrf_token %}
+                    <button type="submit" class="become-btn">Devenir tuteur</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2>Notifications</h2>
+                    <p>Vos dernières alertes.</p>
+                </div>
+            </div>
+
+            <div class="notification-list">
+                {% for notification in recent_notifications %}
+                    <a href="{{ notification.url|default:'#' }}" class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                        <div class="notif-icon {% if notification.notification_type == 'success' %}green{% elif notification.notification_type == 'warning' %}orange{% elif notification.notification_type == 'message' %}purple{% else %}blue{% endif %}">
+                            <i class="fa-solid {% if notification.notification_type == 'success' %}fa-check{% elif notification.notification_type == 'warning' %}fa-clock{% elif notification.notification_type == 'message' %}fa-message{% else %}fa-bell{% endif %}"></i>
+                        </div>
+                        <div>
+                            <h4>{{ notification.title }}</h4>
+                            <p>{{ notification.content }}</p>
+                            <span>{{ notification.created_at|date:"d/m/Y H:i" }}</span>
+                        </div>
+                    </a>
+                {% empty %}
+                    <div class="dashboard-empty compact">
+                        <i class="fa-regular fa-bell"></i>
+                        <p>Aucune notification récente.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+ 
+
+           
+        </div>
+    </div>
+</section>
+
+{% endblock %}

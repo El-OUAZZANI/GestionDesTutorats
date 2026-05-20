@@ -1,0 +1,133 @@
+{% extends "tutor/base.html" %}
+
+{% block title %}
+Mes disponibilités - Espace Tuteur
+{% endblock %}
+
+{% block tutor_nav_availabilities %}active{% endblock %}
+
+{% block content %}
+
+<header class="tutor-topbar">
+    <div>
+        <h1>Mes disponibilités</h1>
+        <p>Sélectionnez librement vos créneaux en présentiel cette semaine, du lundi au samedi.</p>
+    </div>
+
+    <div class="tutor-topbar-actions">
+        <a href="{% url 'tutor_subjects' %}" class="student-mode-btn">
+            <i class="fa-solid fa-book-open"></i>
+            Mes matières
+        </a>
+
+        <div class="tutor-user-avatar">
+            {{ request.user.first_name|first|default:"T" }}
+        </div>
+    </div>
+</header>
+
+<section class="weekly-availability-page">
+    <form method="post" class="weekly-availability-card">
+        {% csrf_token %}
+
+        <div class="weekly-availability-header">
+            <div>
+                <h2>Semaine du {{ week_start|date:"d/m" }} au {{ week_end|date:"d/m" }}</h2>
+                <p>Un carreau correspond à une séance. Vous pouvez choisir autant de créneaux que vous voulez.</p>
+            </div>
+
+            <div class="selected-counter">
+                <strong id="selectedSlotsCount">0</strong>
+                <span>sélectionnés</span>
+            </div>
+        </div>
+
+        <div class="week-calendar">
+            {% for day in availability_days %}
+                <div class="week-day-column">
+                    <div class="week-day-header">
+                        <strong>{{ day.name }}</strong>
+                        <span>{{ day.date|date:"d/m" }}</span>
+                    </div>
+
+                    <div class="week-slots">
+                        {% for cell in day.cells %}
+                            <label class="week-slot {% if cell.availability %}{% if cell.availability.is_available %}existing{% else %}reserved{% endif %}{% endif %}">
+                                <input
+                                    type="checkbox"
+                                    name="slots"
+                                    value="{{ cell.value }}"
+                                    {% if cell.availability and cell.availability.is_available %}checked{% endif %}
+                                    {% if cell.availability and not cell.availability.is_available %}disabled{% endif %}
+                                >
+                                <span class="slot-time">{{ cell.label }}</span>
+                                <span class="slot-subject">{% if cell.availability.room %}{{ cell.availability.room.name }}{% else %}Disponible{% endif %}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="save-weekly-availability-btn">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Enregistrer mes disponibilités
+        </button>
+    </form>
+
+    <section class="availability-list-card">
+        <div class="tutor-card-header">
+            <div>
+                <h2>Disponibilités enregistrées</h2>
+                <p>Les créneaux que l'administration pourra affecter aux salles disponibles.</p>
+            </div>
+        </div>
+
+        <div class="availability-list compact">
+            {% for availability in availabilities %}
+                <div class="availability-item">
+                    <div class="availability-date {% if not availability.is_available %}old{% endif %}">
+                        <strong>{{ availability.date|date:"d" }}</strong>
+                        <span>{{ availability.date|date:"M" }}</span>
+                    </div>
+                    <div class="availability-info">
+                        <h3>Créneau disponible</h3>
+                        <p><i class="fa-solid fa-clock"></i> {{ availability.start_time|time:"H:i" }} - {{ availability.end_time|time:"H:i" }}</p>
+                        <p><i class="fa-solid fa-location-dot"></i> {{ availability.location|default:"Salle à affecter" }}</p>
+                    </div>
+                    {% if availability.is_available %}
+                        <span class="availability-status available">Disponible</span>
+                    {% else %}
+                        <span class="availability-status reserved">Affectée</span>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <div class="tutor-empty-state wide">
+                    <i class="fa-regular fa-calendar-plus"></i>
+                    <p>Aucun créneau ajouté pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</section>
+
+<script>
+    (() => {
+        const checkboxes = Array.from(document.querySelectorAll(".week-slot input[type='checkbox']:not(:disabled)"));
+        const counter = document.getElementById("selectedSlotsCount");
+
+        function updateState() {
+            const selected = checkboxes.filter((checkbox) => checkbox.checked);
+            counter.textContent = selected.length;
+
+            checkboxes.forEach((checkbox) => {
+                checkbox.closest(".week-slot").classList.toggle("selected", checkbox.checked);
+            });
+        }
+
+        checkboxes.forEach((checkbox) => checkbox.addEventListener("change", updateState));
+        updateState();
+    })();
+</script>
+
+{% endblock %}

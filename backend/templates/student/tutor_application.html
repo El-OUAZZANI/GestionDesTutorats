@@ -1,0 +1,165 @@
+{% extends "student/base.html" %}
+
+{% block title %}
+Demande tuteur - GestionDesTutorats
+{% endblock %}
+
+{% block content %}
+<header class="topbar">
+    <div>
+        <h1>Devenir tuteur</h1>
+        <p>Choisissez la filière et les matières que vous souhaitez enseigner.</p>
+    </div>
+
+    <div class="topbar-actions">
+        <a href="{% url 'student_dashboard' %}" class="see-all">
+            <i class="fa-solid fa-arrow-left"></i>
+            Retour
+        </a>
+    </div>
+</header>
+
+<section class="tutor-application-page">
+    <div class="application-intro-card">
+        <div class="application-icon">
+            <i class="fa-solid fa-chalkboard-user"></i>
+        </div>
+
+        <h2>Votre candidature sera validée par l'administration</h2>
+        <p>
+            Après envoi, un administrateur applicatif examinera votre demande.
+            Si elle est acceptée, le mode tuteur sera activé automatiquement.
+        </p>
+
+        <div class="application-suggestions">
+            <h3>Conseils pour une bonne demande</h3>
+            <ul>
+                <li>Choisissez seulement les matières que vous maîtrisez vraiment.</li>
+                <li>Expliquez vos projets, notes, expériences ou travaux réalisés.</li>
+                <li>Indiquez si vous êtes disponible en ligne, en présentiel ou les deux.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="application-form-card">
+        {% if pending_application %}
+            <div class="application-status pending">
+                <i class="fa-solid fa-clock"></i>
+                <div>
+                    <h2>Demande en attente</h2>
+                    <p>Votre candidature est déjà envoyée. L'administration doit encore la valider.</p>
+                </div>
+            </div>
+        {% elif latest_application and latest_application.status == "rejected" %}
+            <div class="application-status rejected">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <div>
+                    <h2>Ancienne demande refusée</h2>
+                    <p>Vous pouvez corriger votre candidature et envoyer une nouvelle demande.</p>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if not pending_application %}
+            <form method="post" class="application-form">
+                {% csrf_token %}
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="{{ form.department.id_for_label }}">{{ form.department.label }}</label>
+                        {{ form.department }}
+                        {{ form.department.errors }}
+                    </div>
+
+                    <div class="form-field">
+                        <label for="{{ form.level.id_for_label }}">{{ form.level.label }}</label>
+                        {{ form.level }}
+                        {{ form.level.errors }}
+                    </div>
+
+                    {{ form.session_mode }}
+                </div>
+
+                <div class="form-field subjects-field">
+                    <label>{{ form.subjects.label }}</label>
+                    <div class="subjects-choice-grid">
+                        {% for subject in subjects_catalog %}
+                            <label
+                                class="subject-choice-card"
+                                data-department="{{ subject.department }}"
+                                data-study-year="{{ subject.study_year }}"
+                            >
+                                <input
+                                    type="checkbox"
+                                    name="subjects"
+                                    value="{{ subject.id }}"
+                                    {% if subject.id in selected_subject_ids %}checked{% endif %}
+                                >
+                                <span>
+                                    <strong>{{ subject.name }}</strong>
+                                    <small>{{ subject.study_year }} · {{ subject.department }}</small>
+                                </span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    {{ form.subjects.errors }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.experience.id_for_label }}">{{ form.experience.label }}</label>
+                    {{ form.experience }}
+                    {{ form.experience.errors }}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.motivation.id_for_label }}">{{ form.motivation.label }}</label>
+                    {{ form.motivation }}
+                    {{ form.motivation.errors }}
+                </div>
+
+                <button type="submit" class="submit-application-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Envoyer la demande
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+    (() => {
+        const departmentSelect = document.querySelector(".js-application-department");
+        const levelSelect = document.querySelector(".js-application-level");
+        const subjectCards = document.querySelectorAll(".subject-choice-card");
+        const yearRank = {
+            "1ère année": 1,
+            "2ème année": 2,
+            "3ème année": 3,
+            "4ème année": 4,
+            "5ème année": 5
+        };
+
+        function filterSubjects() {
+            const selectedDepartment = departmentSelect?.value || "";
+            const selectedLevel = levelSelect?.value || "";
+            const selectedRank = yearRank[selectedLevel] || 0;
+
+            subjectCards.forEach((card) => {
+                const subjectDepartment = card.dataset.department;
+                const subjectRank = yearRank[card.dataset.studyYear] || 0;
+                const input = card.querySelector("input");
+                const isVisible = subjectDepartment === selectedDepartment && subjectRank <= selectedRank;
+
+                card.classList.toggle("is-hidden", !isVisible);
+                if (!isVisible && input) {
+                    input.checked = false;
+                }
+            });
+        }
+
+        departmentSelect?.addEventListener("change", filterSubjects);
+        levelSelect?.addEventListener("change", filterSubjects);
+        filterSubjects();
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends "tutor/base.html" %}
+
+{% block title %}
+Sessions à tutorer - Espace Tuteur
+{% endblock %}
+
+{% block tutor_nav_sessions %}active{% endblock %}
+
+{% block content %}
+
+<header class="tutor-topbar">
+    <div>
+        <h1>Sessions à tutorer</h1>
+        <p>Consultez vos créneaux disponibles et vos séances réservées.</p>
+    </div>
+
+    <div class="tutor-topbar-actions">
+        <a href="{% url 'tutor_calendar' %}" class="student-mode-btn">
+            <i class="fa-solid fa-calendar-days"></i>
+            Calendrier
+        </a>
+
+        <div class="tutor-user-avatar">
+            {{ request.user.first_name|first|default:"T" }}
+        </div>
+    </div>
+</header>
+
+<section class="tutor-sessions-page">
+    <div class="tutor-session-stats-grid">
+        <div class="tutor-session-stat-card">
+            <div class="tutor-session-stat-icon orange">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+            <div>
+                <p>Disponibles</p>
+                <h2>{{ available_count }}</h2>
+            </div>
+        </div>
+
+        <div class="tutor-session-stat-card">
+            <div class="tutor-session-stat-icon blue">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <div>
+                <p>Confirmées</p>
+                <h2>{{ confirmed_count }}</h2>
+            </div>
+        </div>
+
+        <div class="tutor-session-stat-card">
+            <div class="tutor-session-stat-icon green">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <div>
+                <p>Terminées</p>
+                <h2>{{ completed_count }}</h2>
+            </div>
+        </div>
+
+        <div class="tutor-session-stat-card">
+            <div class="tutor-session-stat-icon red">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <div>
+                <p>Annulées</p>
+                <h2>{{ cancelled_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="tutor-session-filter-card">
+        <div class="tutor-session-tabs">
+            <a href="{% url 'tutor_sessions' %}" class="{% if status_filter == 'all' %}active{% endif %}">Toutes</a>
+            <a href="{% url 'tutor_sessions' %}?status=confirmed" class="{% if status_filter == 'confirmed' %}active{% endif %}">Confirmées</a>
+            <a href="{% url 'tutor_sessions' %}?status=completed" class="{% if status_filter == 'completed' %}active{% endif %}">Terminées</a>
+            <a href="{% url 'tutor_sessions' %}?status=cancelled" class="{% if status_filter == 'cancelled' %}active{% endif %}">Annulées</a>
+        </div>
+    </div>
+
+    <div class="tutor-sessions-list-card">
+        <div class="tutor-card-header">
+            <div>
+                <h2>Liste des sessions</h2>
+                <p>Gérez vos séances en tant que tuteur.</p>
+            </div>
+        </div>
+
+        <div class="tutor-sessions-list">
+            {% for availability in assigned_availabilities %}
+                <div class="tutor-session-row">
+                    <div class="tutor-session-date-box">
+                        <strong>{{ availability.date|date:"d" }}</strong>
+                        <span>{{ availability.date|date:"M" }}</span>
+                    </div>
+
+                    <div class="tutor-session-main">
+                        <div class="tutor-session-title">
+                            <h3>Créneau affecté</h3>
+                            <span class="tutor-session-status pending">En attente de réservation</span>
+                        </div>
+
+                        <div class="tutor-session-details">
+                            <span><i class="fa-solid fa-book-open"></i> Matière choisie par l'étudiant au moment de réserver</span>
+                            <span><i class="fa-solid fa-clock"></i> {{ availability.start_time|time:"H:i" }} - {{ availability.end_time|time:"H:i" }}</span>
+                            <span><i class="fa-solid fa-location-dot"></i> {{ availability.room.name|default:availability.location }}</span>
+                        </div>
+
+                        <p>Ce créneau est visible par les étudiants compatibles. Il deviendra une session dès qu'un étudiant le réserve.</p>
+                    </div>
+
+                    <div class="tutor-session-actions">
+                        <span class="tutor-session-action-btn">Disponible</span>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% for session in sessions %}
+                <div class="tutor-session-row">
+                    <div class="tutor-session-date-box {% if session.status == 'completed' or session.status == 'cancelled' or session.status == 'refused' %}old{% endif %}">
+                        <strong>{{ session.start_datetime|date:"d" }}</strong>
+                        <span>{{ session.start_datetime|date:"M" }}</span>
+                    </div>
+
+                    <div class="tutor-session-main">
+                        <div class="tutor-session-title">
+                            <h3>{{ session.subject.name }}</h3>
+                            <span class="tutor-session-status {{ session.status }}">{{ session.get_status_display }}</span>
+                        </div>
+
+                        <div class="tutor-session-details">
+                            <span>
+                                <i class="fa-solid fa-user-graduate"></i>
+                                Étudiant : {{ session.student.get_full_name|default:session.student.username }}
+                            </span>
+                            <span>
+                                <i class="fa-solid fa-clock"></i>
+                                {{ session.start_datetime|date:"H:i" }} - {{ session.end_datetime|date:"H:i" }}
+                            </span>
+                            <span>
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ session.location|default:"Lieu à préciser" }}
+                            </span>
+                        </div>
+
+                        <p>{{ session.request_message|default:"Aucune note ajoutée." }}</p>
+                    </div>
+
+                    <div class="tutor-session-actions">
+                        <a href="{% url 'tutor_session_messages' session.id %}" class="tutor-session-action-btn">Message</a>
+                        {% if session.status == "confirmed" %}
+                            <form method="post" action="{% url 'tutor_complete_session' session.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="tutor-session-action-btn success">Terminer</button>
+                            </form>
+                        {% else %}
+                            <span class="tutor-session-action-btn">Historique</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="tutor-empty-state wide" {% if assigned_availabilities %}hidden{% endif %}>
+                    <i class="fa-regular fa-calendar-xmark"></i>
+                    <p>Aucune session ne correspond à ce filtre.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

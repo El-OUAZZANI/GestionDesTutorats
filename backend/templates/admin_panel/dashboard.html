@@ -1,0 +1,107 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Dashboard admin - GestionDesTutorats{% endblock %}
+{% block admin_nav_dashboard %}active{% endblock %}
+
+{% block content %}
+<header class="admin-topbar">
+    <div>
+        <h1>Tableau de bord admin</h1>
+        <p>Suivez les demandes de tutorat et la gestion des étudiants.</p>
+    </div>
+    <a href="{% url 'admin_create_student' %}" class="admin-primary-btn">
+        <i class="fa-solid fa-plus"></i>
+        Ajouter étudiant
+    </a>
+</header>
+
+<section class="admin-stats">
+    <div class="admin-stat-card">
+        <i class="fa-solid fa-user-graduate"></i>
+        <div>
+            <span>Étudiants</span>
+            <strong>{{ student_count }}</strong>
+        </div>
+    </div>
+    <div class="admin-stat-card">
+        <i class="fa-solid fa-chalkboard-user"></i>
+        <div>
+            <span>Tuteurs</span>
+            <strong>{{ tutor_count }}</strong>
+        </div>
+    </div>
+    <div class="admin-stat-card warning">
+        <i class="fa-solid fa-clock"></i>
+        <div>
+            <span>Demandes en attente</span>
+            <strong>{{ pending_count }}</strong>
+        </div>
+    </div>
+    <div class="admin-stat-card info">
+        <i class="fa-solid fa-bell"></i>
+        <div>
+            <span>Notifications</span>
+            <strong>{{ unread_count }}</strong>
+        </div>
+    </div>
+    <div class="admin-stat-card">
+        <i class="fa-solid fa-envelope-open-text"></i>
+        <div>
+            <span>Messages contact</span>
+            <strong>{{ unread_contact_count }}</strong>
+        </div>
+    </div>
+</section>
+
+<section class="admin-card">
+    <div class="admin-card-header">
+        <div>
+            <h2>Demandes récentes</h2>
+            <p>Les étudiants qui souhaitent devenir tuteurs.</p>
+        </div>
+        <a href="{% url 'admin_requests' %}">Voir tout</a>
+    </div>
+
+    <div class="admin-list">
+        {% for application in pending_applications %}
+            <div class="admin-list-row">
+                <div>
+                    <strong>{{ application.student.get_full_name|default:application.student.username }}</strong>
+                    <span>{{ application.department }} - {{ application.level }}</span>
+                </div>
+                <span class="status-pill pending">En attente</span>
+            </div>
+        {% empty %}
+            <p class="empty-state">Aucune demande en attente.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="admin-card dashboard-contact-card">
+    <div class="admin-card-header">
+        <div>
+            <h2>Messages contact récents</h2>
+            <p>Demandes envoyées depuis la page Contact admin.</p>
+        </div>
+        <a href="{% url 'admin_notifications' %}">Voir tout</a>
+    </div>
+
+    <div class="admin-list">
+        {% for contact_message in recent_contact_messages %}
+            <div class="admin-list-row">
+                <div>
+                    <strong>{{ contact_message.full_name }}</strong>
+                    <span>{{ contact_message.get_request_type_display }} - {{ contact_message.email }}</span>
+                </div>
+                {% if contact_message.is_read %}
+                    <span class="status-pill neutral">Lu</span>
+                {% else %}
+                    <span class="status-pill pending">Non lu</span>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="empty-state">Aucun message contact.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Affectation des sessions - GestionDesTutorats{% endblock %}
+{% block admin_nav_sessions %}active{% endblock %}
+
+{% block content %}
+<header class="admin-topbar">
+    <div>
+        <h1>Affectation des sessions</h1>
+        <p>Visualisez les creneaux tuteurs, choisissez la matiere a enseigner et affectez une salle libre.</p>
+    </div>
+</header>
+
+<section class="admin-card assignment-calendar-card">
+    <div class="admin-card-header">
+        <div>
+            <h2>Semaine du {{ week_start|date:"d/m" }} au {{ week_end|date:"d/m" }}</h2>
+            <p>Une salle est proposee seulement si elle n'est pas occupee sur ce creneau exact.</p>
+        </div>
+    </div>
+
+    <div class="admin-week-calendar">
+        {% for day in assignment_days %}
+            <div class="admin-week-day">
+                <div class="admin-week-day-header">
+                    <strong>{{ day.name }}</strong>
+                    <span>{{ day.date|date:"d/m" }}</span>
+                </div>
+
+                <div class="admin-week-slots">
+                    {% for cell in day.cells %}
+                        <div class="admin-week-slot">
+                            <div class="admin-slot-time">{{ cell.label }}</div>
+
+                            {% for row in cell.availabilities %}
+                                <article
+                                    class="admin-availability-card {% if row.availability.room and row.availability.subject %}assigned{% endif %}"
+                                    data-slot-key="{{ day.date|date:'Y-m-d' }}-{{ cell.label }}"
+                                >
+                                    <div class="admin-availability-title">
+                                        <strong>Disponibilite</strong>
+                                        {% if row.availability.room %}
+                                            <span>{{ row.availability.room.name }}</span>
+                                        {% else %}
+                                            <span>Salle a affecter</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <p>
+                                        <i class="fa-solid fa-chalkboard-user"></i>
+                                        {{ row.availability.tutor.get_full_name|default:row.availability.tutor.username }}
+                                    </p>
+                                    <p>
+                                        <i class="fa-solid fa-layer-group"></i>
+                                        Matieres du tuteur
+                                    </p>
+
+                                    <div class="admin-subject-mini-list">
+                                        {% for subject in row.subjects %}
+                                            <span>{{ subject.name }} - {{ subject.study_year }}</span>
+                                        {% empty %}
+                                            <span>Aucune matiere selectionnee</span>
+                                        {% endfor %}
+                                    </div>
+
+                                    {% if row.availability.subject %}
+                                        <div class="assigned-subject-state">
+                                            <i class="fa-solid fa-book-open"></i>
+                                            Matiere affectee : {{ row.availability.subject.name }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if row.availability.room %}
+                                        <div class="assigned-room-state">
+                                            <i class="fa-solid fa-circle-check"></i>
+                                            Salle affectee : {{ row.availability.room.name }}
+                                        </div>
+                                    {% endif %}
+
+                                    <form method="post" class="calendar-assignment-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="availability" value="{{ row.availability.id }}">
+
+                                        <select name="subject" required>
+                                            <option value="">Matiere a enseigner</option>
+                                            {% for subject in row.subjects %}
+                                                <option value="{{ subject.id }}" {% if row.availability.subject_id == subject.id %}selected{% endif %}>
+                                                    {{ subject.name }} - {{ subject.study_year }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+
+                                        <select name="room" required data-current-room="{{ row.availability.room.id|default:'' }}">
+                                            <option value="">Salle libre</option>
+                                            {% for room in row.rooms %}
+                                                <option value="{{ room.id }}" {% if row.availability.room_id == room.id %}selected{% endif %}>{{ room.name }}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                        <button type="submit" {% if not row.rooms or not row.subjects %}disabled{% endif %}>
+                                            <i class="fa-solid fa-check"></i>
+                                            Affecter salle et matiere
+                                        </button>
+                                    </form>
+                                </article>
+                            {% empty %}
+                                <div class="admin-empty-slot">Aucun tuteur</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="admin-card dashboard-contact-card">
+    <div class="admin-card-header">
+        <div>
+            <h2>Sessions programmees</h2>
+            <p>Dernieres reservations creees par les etudiants.</p>
+        </div>
+    </div>
+
+    <div class="admin-list">
+        {% for session in sessions %}
+            <div class="admin-list-row">
+                <div>
+                    <strong>{{ session.subject.name }}</strong>
+                    <span>{{ session.tutor.get_full_name|default:session.tutor.username }} avec {{ session.student.get_full_name|default:session.student.username }}</span>
+                    <span>{{ session.start_datetime|date:"d/m/Y H:i" }} - {{ session.room.name|default:session.location }}</span>
+                </div>
+                <span class="status-pill approved">{{ session.get_status_display }}</span>
+            </div>
+        {% empty %}
+            <p class="empty-state">Aucune session programmee.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<script>
+    (() => {
+        const cards = Array.from(document.querySelectorAll(".admin-availability-card"));
+
+        function refreshRoomOptions() {
+            const selectedBySlot = new Map();
+
+            cards.forEach((card) => {
+                const select = card.querySelector("select[name='room']");
+                if (!select || !select.value) return;
+
+                const slotKey = card.dataset.slotKey;
+                if (!selectedBySlot.has(slotKey)) {
+                    selectedBySlot.set(slotKey, new Set());
+                }
+                selectedBySlot.get(slotKey).add(select.value);
+            });
+
+            cards.forEach((card) => {
+                const select = card.querySelector("select[name='room']");
+                if (!select) return;
+
+                const usedRooms = selectedBySlot.get(card.dataset.slotKey) || new Set();
+                Array.from(select.options).forEach((option) => {
+                    if (!option.value) return;
+                    option.hidden = option.value !== select.value && usedRooms.has(option.value);
+                });
+            });
+        }
+
+        cards.forEach((card) => {
+            const select = card.querySelector("select[name='room']");
+            select?.addEventListener("change", refreshRoomOptions);
+        });
+        refreshRoomOptions();
+    })();
+</script>
+{% endblock %}

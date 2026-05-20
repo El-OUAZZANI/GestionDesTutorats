@@ -1,0 +1,79 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Étudiants - GestionDesTutorats{% endblock %}
+{% block admin_nav_students %}active{% endblock %}
+
+{% block content %}
+<header class="admin-topbar">
+    <div>
+        <h1>Gestion des étudiants</h1>
+        <p>Consultez les comptes étudiants et leur statut tuteur.</p>
+    </div>
+    <a href="{% url 'admin_create_student' %}" class="admin-primary-btn">
+        <i class="fa-solid fa-plus"></i>
+        Ajouter étudiant
+    </a>
+</header>
+
+<section class="admin-card">
+    <div class="admin-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Étudiant</th>
+                    <th>Email</th>
+                    <th>Filière</th>
+                    <th>Niveau</th>
+                    <th>Statut</th>
+                    <th>Compte</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.get_full_name|default:student.username }}</td>
+                        <td>{{ student.email|default:"-" }}</td>
+                        <td>{{ student.profile.department|default:"-" }}</td>
+                        <td>{{ student.profile.study_year|default:"-" }}</td>
+                        <td>
+                            {% if student.profile.is_tutor %}
+                                <span class="status-pill approved">Tuteur</span>
+                            {% else %}
+                                <span class="status-pill neutral">Étudiant</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if student.is_active %}
+                                <span class="status-pill approved">Actif</span>
+                            {% else %}
+                                <span class="status-pill rejected">Désactivé</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <form method="post" action="{% url 'admin_toggle_student_tutor' student.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit">
+                                        {% if student.profile.is_tutor %}Retirer tuteur{% else %}Rendre tuteur{% endif %}
+                                    </button>
+                                </form>
+                                <form method="post" action="{% url 'admin_toggle_student_active' student.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="danger">
+                                        {% if student.is_active %}Désactiver{% else %}Activer{% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">Aucun étudiant trouvé.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

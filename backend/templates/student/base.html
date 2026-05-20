@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <title>
+        {% block title %}
+            Espace Étudiant - GestionDesTutorats
+        {% endblock %}
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS principal de l’espace étudiant -->
+    <link rel="stylesheet" href="{% static 'css/student.css' %}?v=8">
+
+    <!-- CSS spécifique pour une page particulière -->
+    {% block extra_css %}{% endblock %}
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+<div class="student-layout">
+
+    <!-- Sidebar commune de l’espace étudiant -->
+    {% block sidebar %}
+        {% include "student/sidebar.html" %}
+    {% endblock %}
+
+    <!-- Contenu principal de chaque page -->
+    <main class="main-content {% block main_class %}{% endblock %}">
+        {% if messages %}
+            <div class="student-alerts">
+                {% for message in messages %}
+                    <div class="student-alert {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+</div>
+
+<!-- JS spécifique pour une page particulière -->
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

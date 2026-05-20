@@ -1,0 +1,49 @@
+<aside class="admin-sidebar">
+    <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+        <span><i class="fa-solid fa-user-shield"></i></span>
+        <div>
+            <h2>Admin</h2>
+            <p>GestionDesTutorats</p>
+        </div>
+    </a>
+
+    <nav class="admin-menu">
+        <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+            <i class="fa-solid fa-chart-line"></i>
+            Tableau de bord
+        </a>
+        <a href="{% url 'admin_requests' %}" class="{% if request.resolver_match.url_name == 'admin_requests' or request.resolver_match.url_name == 'admin_review_tutor_application' %}active{% endif %}">
+            <i class="fa-solid fa-inbox"></i>
+            Demandes tuteur
+        </a>
+        <a href="{% url 'admin_notifications' %}" class="{% if request.resolver_match.url_name == 'admin_notifications' %}active{% endif %}">
+            <i class="fa-solid fa-bell"></i>
+            Notifications
+        </a>
+        <a href="{% url 'admin_students' %}" class="{% if request.resolver_match.url_name == 'admin_students' or request.resolver_match.url_name == 'admin_create_student' or request.resolver_match.url_name == 'admin_toggle_student_active' or request.resolver_match.url_name == 'admin_toggle_student_tutor' %}active{% endif %}">
+            <i class="fa-solid fa-user-graduate"></i>
+            Étudiants
+        </a>
+        <a href="{% url 'admin_tutors' %}" class="{% if request.resolver_match.url_name == 'admin_tutors' %}active{% endif %}">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            Tuteurs
+        </a>
+        <a href="{% url 'admin_subjects' %}" class="{% if request.resolver_match.url_name == 'admin_subjects' %}active{% endif %}">
+            <i class="fa-solid fa-book-open"></i>
+            Matières
+        </a>
+        <a href="{% url 'admin_sessions' %}" class="{% if request.resolver_match.url_name == 'admin_sessions' %}active{% endif %}">
+            <i class="fa-solid fa-calendar-check"></i>
+            Sessions
+        </a>
+        <a href="{% url 'admin_archives' %}" class="{% if request.resolver_match.url_name == 'admin_archives' %}active{% endif %}">
+            <i class="fa-solid fa-box-archive"></i>
+            Archives
+        </a>
+    </nav>
+
+    <a href="{% url 'logout' %}" class="admin-logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Déconnexion
+    </a>
+</aside>

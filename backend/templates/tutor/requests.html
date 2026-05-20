@@ -1,0 +1,37 @@
+{% extends "tutor/base.html" %}
+
+{% block title %}
+Séances réservées - Espace Tuteur
+{% endblock %}
+
+{% block tutor_nav_sessions %}active{% endblock %}
+
+{% block content %}
+
+<header class="tutor-topbar">
+    <div>
+        <h1>Séances réservées</h1>
+        <p>Les réservations sont confirmées automatiquement lorsqu'un étudiant choisit un créneau avec salle.</p>
+    </div>
+
+    <div class="tutor-topbar-actions">
+        <a href="{% url 'tutor_sessions' %}" class="student-mode-btn">
+            <i class="fa-solid fa-calendar-check"></i>
+            Voir les sessions
+        </a>
+
+        <div class="tutor-user-avatar">
+            {{ request.user.first_name|first|default:"T" }}
+        </div>
+    </div>
+</header>
+
+<section class="tutor-requests-page">
+    <div class="tutor-empty-state wide">
+        <i class="fa-solid fa-calendar-check"></i>
+        <p>Cette page est remplacée par la page des sessions à tutorer.</p>
+        <a href="{% url 'tutor_sessions' %}" class="tutor-session-action-btn success">Ouvrir mes sessions</a>
+    </div>
+</section>
+
+{% endblock %}

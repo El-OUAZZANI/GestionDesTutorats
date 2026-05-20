@@ -1,0 +1,136 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact admin - GestionDesTutorats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/contact_admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header class="main-header">
+    <nav class="navbar">
+
+        <a href="{% url 'home' %}" class="logo">
+            <span class="logo-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </span>
+            <span>GestionDes<span>Tutorats</span></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Accueil</a></li>
+            <li><a href="{% url 'about' %}">À propos</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="{% url 'login' %}" class="btn btn-outline">
+                <i class="fa-regular fa-user"></i>
+                Se connecter
+            </a>
+
+            <a href="javascript:history.back()" class="btn btn-primary">
+                <i class="fa-solid fa-arrow-left"></i>
+                Retour
+            </a>
+        </div>
+
+    </nav>
+</header>
+
+<main class="contact-page">
+    <section class="contact-hero">
+        <div class="contact-copy">
+            <span class="contact-kicker">
+                <i class="fa-solid fa-headset"></i>
+                Assistance administrative
+            </span>
+
+            <h1>Contactez l'administration</h1>
+
+            <p>
+                Vous n'avez pas encore de compte, vous souhaitez activer le mode tuteur
+                ou vous avez besoin d'aide pour accéder à la plateforme ? Envoyez une
+                demande claire à l'équipe administrative.
+            </p>
+
+            <div class="contact-info-grid">
+  
+
+                <div class="contact-info-card">
+                    <i class="fa-solid fa-clock"></i>
+                    <div>
+                        <strong>Disponibilité</strong>
+                        <span>Lundi - Vendredi, 09:00 - 17:00</span>
+                    </div>
+                </div>
+
+                <div class="contact-info-card">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div>
+                        <strong>Service</strong>
+                        <span>Administration pédagogique</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="contact-card">
+            <div class="contact-card-header">
+                <h2>Envoyer une demande</h2>
+                <p>Cette version prépare l'interface du formulaire de contact.</p>
+            </div>
+
+            {% if messages %}
+                <div class="contact-alerts">
+                    {% for message in messages %}
+                        <div class="contact-alert {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form class="contact-form" method="post" action="{% url 'contact_admin' %}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <label for="full_name">Nom complet</label>
+                    <input id="full_name" name="full_name" type="text" placeholder="Votre nom complet" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="email">Email institutionnel</label>
+                    <input id="email" name="email" type="email" placeholder="prenom.nom@emsi.ma" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="request_type">Type de demande</label>
+                    <select id="request_type" name="request_type" required>
+                        <option value="account">Création de compte</option>
+                        <option value="tutor">Activation mode tuteur</option>
+                        <option value="login">Problème de connexion</option>
+                        <option value="other">Autre demande</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Décrivez votre demande..." required></textarea>
+                </div>
+
+                <button type="submit" class="contact-submit">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Préparer la demande
+                </button>
+            </form>
+        </section>
+    </section>
+</main>
+
+</body>
+</html>

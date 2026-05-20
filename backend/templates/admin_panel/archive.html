@@ -1,0 +1,29 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Archives - GestionDesTutorats{% endblock %}
+{% block admin_nav_archives %}active{% endblock %}
+
+{% block content %}
+<header class="admin-topbar">
+    <div>
+        <h1>Archives</h1>
+        <p>Demandes acceptées ou refusées.</p>
+    </div>
+</header>
+
+<section class="admin-card">
+    <div class="admin-list">
+        {% for application in applications %}
+            <div class="admin-list-row">
+                <div>
+                    <strong>{{ application.student.get_full_name|default:application.student.username }}</strong>
+                    <span>{{ application.department }} - {{ application.created_at|date:"d/m/Y" }}</span>
+                </div>
+                <span class="status-pill {{ application.status }}">{{ application.get_status_display }}</span>
+            </div>
+        {% empty %}
+            <p class="empty-state">Aucune archive.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "student/base.html" %}
+
+{% block title %}Rechercher une matiere - GestionDesTutorats{% endblock %}
+{% block nav_search %}active{% endblock %}
+
+{% block content %}
+<header class="topbar">
+    <div>
+        <h1>Rechercher une matiere</h1>
+        <p>Choisissez une matiere et visualisez les creneaux disponibles du lundi au samedi.</p>
+    </div>
+
+    <div class="topbar-actions">
+        <form method="get" action="{% url 'search_tutors' %}" class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" name="q" value="{{ query }}" placeholder="Rechercher...">
+            {% if selected_subject %}
+                <input type="hidden" name="subject" value="{{ selected_subject }}">
+            {% endif %}
+        </form>
+
+        <div class="user-avatar">
+            {{ request.user.first_name|first|default:"E" }}
+        </div>
+    </div>
+</header>
+
+<section class="visitor-search-page">
+    <form method="get" class="visitor-filter-card">
+        <div class="visitor-large-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" name="q" value="{{ query }}" placeholder="Rechercher un tuteur ou une salle...">
+        </div>
+
+        <div class="visitor-filters-row">
+            <div class="visitor-filter-field">
+                <label>Matiere</label>
+                <div class="visitor-select-wrap">
+                    <i class="fa-solid fa-book-open"></i>
+                    <select name="subject" required>
+                        <option value="">Choisir une matiere de ma filiere et mon niveau</option>
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}" {% if selected_subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                                {{ subject.name }} - {{ subject.study_year }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="visitor-filter-field">
+                <label>Profil academique</label>
+                <div class="visitor-locked-filter">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>
+                        <strong>{{ student_department|default:"Filiere non renseignee" }}</strong>
+                        <small>{{ student_year|default:"Niveau non renseigne" }}</small>
+                    </span>
+                </div>
+            </div>
+
+            <div class="visitor-filter-field visitor-range-field">
+                <label>Semaine affichee</label>
+                <div class="visitor-locked-filter">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span>
+                        <strong>{{ week_start|date:"d/m" }} - {{ week_end|date:"d/m" }}</strong>
+                        <small>Lundi a samedi</small>
+                    </span>
+                </div>
+            </div>
+
+            <button class="visitor-search-btn" type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Charger
+            </button>
+        </div>
+    </form>
+
+    <div class="visitor-results-summary">
+        <div>
+            <h1>Rechercher une matiere</h1>
+            {% if selected_subject_obj %}
+                <p>{{ available_slots_count }} creneau(x) disponible(s) pour {{ selected_subject_obj.name }}, semaine du {{ week_start|date:"d/m" }} au {{ week_end|date:"d/m" }}.</p>
+            {% else %}
+                <p>Choisissez une matiere de votre filiere et de votre annee pour afficher les creneaux disponibles.</p>
+            {% endif %}
+        </div>
+        <a href="{% url 'student_sessions' %}" class="visitor-outline-link">
+            <i class="fa-solid fa-calendar-check"></i>
+            Mes sessions
+        </a>
+    </div>
+
+    {% if selected_subject_obj %}
+        <section class="visitor-week-card">
+            <div class="visitor-week-legend">
+                <span><i class="legend-dot available"></i> Disponible</span>
+                <span><i class="legend-dot busy"></i> Deja reserve</span>
+                <span><i class="legend-dot empty"></i> Aucun tuteur</span>
+            </div>
+
+            <div class="visitor-week-calendar">
+                {% for day in availability_days %}
+                    <div class="visitor-week-day">
+                        <div class="visitor-week-day-header">
+                            <strong>{{ day.name }}</strong>
+                            <span>{{ day.date|date:"d/m" }}</span>
+                        </div>
+
+                        <div class="visitor-week-slots">
+                            {% for cell in day.cells %}
+                                <div class="visitor-week-slot {% if cell.is_available %}available{% elif cell.has_conflict %}busy{% elif cell.has_own_slot %}busy{% else %}empty{% endif %}">
+                                    <strong>{{ cell.label }}</strong>
+
+                                    {% if cell.is_available %}
+                                        <span>{{ cell.tutors_count }} tuteur(s)</span>
+                                        <small>{{ cell.availability.room.name }}</small>
+
+                                        <form method="post" action="{% url 'reserve_availability_session' cell.availability.id %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="subject" value="{{ selected_subject_obj.id }}">
+                                            <button type="submit">Reserver</button>
+                                        </form>
+                                    {% elif cell.has_conflict %}
+                                        <span>Vous avez deja une seance</span>
+                                    {% elif cell.has_own_slot %}
+                                        <span>Votre propre creneau</span>
+                                    {% else %}
+                                        <span>Aucun creneau</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% else %}
+        <div class="visitor-slots-grid">
+            <div class="visitor-empty-state">
+                <i class="fa-solid fa-book-open"></i>
+                <p>Selectionnez une matiere pour charger la grille des disponibilites.</p>
+            </div>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

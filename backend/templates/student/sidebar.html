@@ -1,0 +1,90 @@
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+
+    <a href="{% url 'student_dashboard' %}" class="sidebar-logo">
+        <div class="logo-icon">
+            <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+
+        <div>
+            <h2>GestionDesTutorats</h2>
+            <p>Espace étudiant</p>
+        </div>
+    </a>
+
+    <nav class="sidebar-menu">
+        <a href="{% url 'student_dashboard' %}" class="{% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
+            <i class="fa-solid fa-house"></i>
+            <span>Tableau de bord</span>
+        </a>
+
+        <a href="{% url 'search_tutors' %}" class="{% if request.resolver_match.url_name == 'search_tutors' or request.resolver_match.url_name == 'reserve_availability_session' or request.resolver_match.url_name == 'reserve_tutor_session' %}active{% endif %}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Rechercher une matière</span>
+        </a>
+
+        <a href="{% url 'student_sessions' %}" class="{% if request.resolver_match.url_name == 'student_sessions' or request.resolver_match.url_name == 'cancel_student_session' %}active{% endif %}">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Mes sessions</span>
+        </a>
+
+        <a href="{% url 'student_messages' %}" class="{% if request.resolver_match.url_name == 'student_messages' or request.resolver_match.url_name == 'student_session_messages' %}active{% endif %}">
+            <i class="fa-solid fa-message"></i>
+            <span>Messages</span>
+        </a>
+
+        <a href="{% url 'student_notifications' %}" class="{% if request.resolver_match.url_name == 'student_notifications' or request.resolver_match.url_name == 'mark_notifications_read' %}active{% endif %}">
+            <i class="fa-solid fa-bell"></i>
+            <span>Notifications</span>
+        </a>
+
+        <a href="{% url 'student_profile' %}" class="{% if request.resolver_match.url_name == 'student_profile' or request.resolver_match.url_name == 'student_contact_admin' or request.resolver_match.url_name == 'student_contact_admin_success' or request.resolver_match.url_name == 'tutor_application' %}active{% endif %}">
+            <i class="fa-solid fa-user"></i>
+            <span>Mon profil</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        {% if  request.user.profile.is_tutor %}
+                <div class="sidebar-tutor-card">
+            <div class="tutor-icon">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+
+            <h3>Mode tuteur</h3>
+            <p>Accédez à votre espace tuteur et gérez vos créneaux, séances et matières.</p>
+
+            <a href="{% url 'tutor_dashboard' %}" class="sidebar-btn">
+                Accéder
+            </a>
+        </div>
+                        {% else %}
+
+                                    <div class="sidebar-tutor-card">
+                <div class="tutor-icon">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+
+                <h3>Devenir tuteur</h3>
+                <p>Partagez vos connaissances avec d’autres étudiants.</p>
+
+                <form method="post" action="{% url 'activate_tutor_mode' %}" class="activate-tutor-form">
+                    {% csrf_token %}
+                    <button type="submit" class="sidebar-btn">
+                        Activer
+                    </button>
+                </form>
+            </div>
+
+
+        {% endif %}
+
+        <a href="{% url 'logout' %}" class="logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Déconnexion
+        </a>
+
+    </div>
+
+</aside>

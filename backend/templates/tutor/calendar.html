@@ -1,0 +1,149 @@
+{% extends "tutor/base.html" %}
+
+{% block title %}
+Calendrier - Espace Tuteur
+{% endblock %}
+
+{% block tutor_nav_calendar %}active{% endblock %}
+
+{% block content %}
+
+<header class="tutor-topbar">
+    <div>
+        <h1>Calendrier</h1>
+        <p>Visualisez vos créneaux disponibles et vos sessions confirmées.</p>
+    </div>
+
+    <div class="tutor-topbar-actions">
+        <a href="{% url 'tutor_availabilities' %}" class="student-mode-btn">
+            <i class="fa-solid fa-plus"></i>
+            Ajouter un créneau
+        </a>
+
+        <div class="tutor-user-avatar">
+            {{ request.user.first_name|first|default:"T" }}
+        </div>
+    </div>
+</header>
+
+<section class="tutor-calendar-page">
+    <div class="calendar-stats-grid">
+        <div class="calendar-stat-card">
+            <div class="calendar-stat-icon green">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div>
+                <p>Créneaux disponibles</p>
+                <h2>{{ available_count }}</h2>
+            </div>
+        </div>
+
+        <div class="calendar-stat-card">
+            <div class="calendar-stat-icon orange">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+            <div>
+                <p>Créneaux réservés</p>
+                <h2>{{ confirmed_count }}</h2>
+            </div>
+        </div>
+
+        <div class="calendar-stat-card">
+            <div class="calendar-stat-icon blue">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <div>
+                <p>Sessions terminées</p>
+                <h2>{{ completed_count }}</h2>
+            </div>
+        </div>
+
+        <div class="calendar-stat-card">
+            <div class="calendar-stat-icon red">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <div>
+                <p>Créneaux indisponibles</p>
+                <h2>{{ unavailable_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="calendar-list-grid">
+        <div class="calendar-main-card">
+            <div class="calendar-header">
+                <div>
+                    <h2>Disponibilités</h2>
+                    <p>Vos prochains créneaux déclarés.</p>
+                </div>
+            </div>
+
+            <div class="availability-list compact">
+                {% for availability in availabilities %}
+                    <div class="availability-item">
+                        <div class="availability-date {% if not availability.is_available %}old{% endif %}">
+                            <strong>{{ availability.date|date:"d" }}</strong>
+                            <span>{{ availability.date|date:"M" }}</span>
+                        </div>
+
+                        <div class="availability-info">
+                            <h3>{{ availability.subject.name }}</h3>
+                            <p><i class="fa-solid fa-clock"></i> {{ availability.start_time|time:"H:i" }} - {{ availability.end_time|time:"H:i" }}</p>
+                            <p><i class="fa-solid fa-location-dot"></i> {{ availability.get_mode_display }}{% if availability.location %} · {{ availability.location }}{% endif %}</p>
+                        </div>
+
+                        {% if availability.is_available %}
+                            <span class="availability-status available">Disponible</span>
+                        {% else %}
+                            <span class="availability-status disabled">Désactivé</span>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <div class="tutor-empty-state wide">
+                        <i class="fa-regular fa-calendar-plus"></i>
+                        <p>Aucune disponibilité à afficher.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="calendar-main-card">
+            <div class="calendar-header">
+                <div>
+                    <h2>Sessions</h2>
+                    <p>Séances planifiées par réservation.</p>
+                </div>
+            </div>
+
+            <div class="tutor-sessions-list compact">
+                {% for session in sessions %}
+                    <div class="tutor-session-row">
+                        <div class="tutor-session-date-box {% if session.status == 'completed' or session.status == 'cancelled' or session.status == 'refused' %}old{% endif %}">
+                            <strong>{{ session.start_datetime|date:"d" }}</strong>
+                            <span>{{ session.start_datetime|date:"M" }}</span>
+                        </div>
+
+                        <div class="tutor-session-main">
+                            <div class="tutor-session-title">
+                                <h3>{{ session.subject.name }}</h3>
+                                <span class="tutor-session-status {{ session.status }}">{{ session.get_status_display }}</span>
+                            </div>
+
+                            <div class="tutor-session-details">
+                                <span><i class="fa-solid fa-user-graduate"></i> {{ session.student.get_full_name|default:session.student.username }}</span>
+                                <span><i class="fa-solid fa-clock"></i> {{ session.start_datetime|date:"H:i" }} - {{ session.end_datetime|date:"H:i" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="tutor-empty-state wide">
+                        <i class="fa-regular fa-calendar-xmark"></i>
+                        <p>Aucune session à afficher.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

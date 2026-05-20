@@ -1,0 +1,71 @@
+<!-- ================= SIDEBAR TUTEUR ================= -->
+<aside class="tutor-sidebar">
+
+    <a href="{% url 'tutor_dashboard' %}" class="tutor-sidebar-logo">
+        <div class="tutor-logo-icon">
+            <i class="fa-solid fa-chalkboard-user"></i>
+        </div>
+
+        <div>
+            <h2>Mode Tuteur</h2>
+            <p>GestionDesTutorats</p>
+        </div>
+    </a>
+
+    <nav class="tutor-sidebar-menu">
+
+        <a href="{% url 'tutor_dashboard' %}" class="{% if request.resolver_match.url_name == 'tutor_dashboard' %}active{% endif %}">
+            <i class="fa-solid fa-house"></i>
+            <span>Tableau de bord</span>
+        </a>
+
+        <a href="{% url 'tutor_calendar' %}" class="{% if request.resolver_match.url_name == 'tutor_calendar' %}active{% endif %}">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Calendrier</span>
+        </a>
+
+        <a href="{% url 'tutor_availabilities' %}" class="{% if request.resolver_match.url_name == 'tutor_availabilities' or request.resolver_match.url_name == 'tutor_toggle_availability' %}active{% endif %}">
+            <i class="fa-solid fa-clock"></i>
+            <span>Mes disponibilités</span>
+        </a>
+
+        <a href="{% url 'tutor_sessions' %}" class="{% if request.resolver_match.url_name == 'tutor_sessions' or request.resolver_match.url_name == 'tutor_requests' or request.resolver_match.url_name == 'tutor_complete_session' or request.resolver_match.url_name == 'tutor_review_session' %}active{% endif %}">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Sessions à tutorer</span>
+        </a>
+
+        <a href="{% url 'tutor_messages' %}" class="{% if request.resolver_match.url_name == 'tutor_messages' or request.resolver_match.url_name == 'tutor_session_messages' %}active{% endif %}">
+            <i class="fa-solid fa-message"></i>
+            <span>Messages</span>
+        </a>
+
+        <a href="{% url 'tutor_subjects' %}" class="{% if request.resolver_match.url_name == 'tutor_subjects' %}active{% endif %}">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Matières enseignées</span>
+        </a>
+
+    </nav>
+
+    <div class="tutor-sidebar-bottom">
+
+        <div class="tutor-mode-card">
+            <div class="tutor-mode-icon">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+
+            <h3>Espace étudiant</h3>
+            <p>Retournez à votre espace principal pour rechercher une matière ou gérer vos réservations.</p>
+
+            <a href="{% url 'student_dashboard' %}" class="tutor-mode-btn">
+                Retour étudiant
+            </a>
+        </div>
+
+        <a href="{% url 'logout' %}" class="tutor-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Déconnexion
+        </a>
+
+    </div>
+
+</aside>

@@ -1,0 +1,23 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Matières - GestionDesTutorats{% endblock %}
+{% block admin_nav_subjects %}active{% endblock %}
+
+{% block content %}
+<header class="admin-topbar">
+    <div>
+        <h1>Matières disponibles</h1>
+        <p>Les matières sont organisées par filière et par année.</p>
+    </div>
+</header>
+
+<section class="admin-card">
+    <div class="subject-tags large">
+        {% for subject in subjects %}
+            <span>{{ subject.name }} - {{ subject.study_year }} - {{ subject.department }}</span>
+        {% empty %}
+            <span>Aucune matière disponible.</span>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

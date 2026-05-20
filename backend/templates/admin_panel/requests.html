@@ -1,0 +1,75 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Demandes tuteur - GestionDesTutorats{% endblock %}
+{% block admin_nav_requests %}active{% endblock %}
+
+{% block content %}
+<header class="admin-topbar">
+    <div>
+        <h1>Demandes de tutorat</h1>
+        <p>Acceptez ou refusez les étudiants qui souhaitent devenir tuteurs.</p>
+    </div>
+</header>
+
+<section class="requests-grid">
+    {% for application in applications %}
+        <article class="request-admin-card">
+            <div class="request-admin-header">
+                <div>
+                    <h2>{{ application.student.get_full_name|default:application.student.username }}</h2>
+                    <p>{{ application.student.email|default:"Email non renseigné" }}</p>
+                </div>
+                <span class="status-pill {{ application.status }}">{{ application.get_status_display }}</span>
+            </div>
+
+            <div class="request-meta">
+                <span><i class="fa-solid fa-building-columns"></i> {{ application.department }}</span>
+                <span><i class="fa-solid fa-layer-group"></i> {{ application.level }}</span>
+                <span><i class="fa-solid fa-video"></i> {{ application.get_session_mode_display }}</span>
+            </div>
+
+            <div class="subject-tags">
+                {% for subject in application.subjects.all %}
+                    <span>{{ subject.name }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="request-text">
+                <h3>Motivation</h3>
+                <p>{{ application.motivation }}</p>
+            </div>
+
+            {% if application.experience %}
+                <div class="request-text">
+                    <h3>Expérience</h3>
+                    <p>{{ application.experience }}</p>
+                </div>
+            {% endif %}
+
+            {% if application.status == "pending" %}
+                <div class="request-actions">
+                    <form method="post" action="{% url 'admin_review_tutor_application' application.id 'approve' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="approve-btn">
+                            <i class="fa-solid fa-check"></i>
+                            Accepter
+                        </button>
+                    </form>
+
+                    <form method="post" action="{% url 'admin_review_tutor_application' application.id 'reject' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="reject-btn">
+                            <i class="fa-solid fa-xmark"></i>
+                            Refuser
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </article>
+    {% empty %}
+        <section class="admin-card">
+            <p class="empty-state">Aucune demande de tutorat.</p>
+        </section>
+    {% endfor %}
+</section>
+{% endblock %}

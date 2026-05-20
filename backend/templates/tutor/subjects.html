@@ -1,0 +1,86 @@
+{% extends "tutor/base.html" %}
+
+{% block title %}
+Matieres enseignees - Espace Tuteur
+{% endblock %}
+
+{% block tutor_nav_subjects %}active{% endblock %}
+
+{% block content %}
+
+<header class="tutor-topbar">
+    <div>
+        <h1>Matieres enseignees</h1>
+        <p>Choisissez les matieres que vous pouvez enseigner dans votre filiere et les annees inferieures ou egales a la votre.</p>
+    </div>
+
+    <div class="tutor-topbar-actions">
+        <a href="{% url 'tutor_availabilities' %}" class="student-mode-btn">
+            <i class="fa-solid fa-clock"></i>
+            Ajouter disponibilite
+        </a>
+
+        <div class="tutor-user-avatar">
+            {{ request.user.first_name|first|default:"T" }}
+        </div>
+    </div>
+</header>
+
+<section class="tutor-subjects-page">
+    <div class="subjects-layout subjects-layout-single">
+        <div class="subject-form-card">
+            <div class="tutor-card-header">
+                <div>
+                    <h2>Parametres tuteur</h2>
+                    <p>Votre visibilite inclut les matieres de votre filiere jusqu'a votre annee actuelle.</p>
+                </div>
+            </div>
+
+            <div class="tutor-profile-summary">
+                <div>
+                    <span>Filiere</span>
+                    <strong>{{ profile.department|default:"Non renseignee" }}</strong>
+                </div>
+                <div>
+                    <span>Annee</span>
+                    <strong>{{ profile.study_year|default:"Non renseignee" }}</strong>
+                </div>
+                <div>
+                    <span>Statut</span>
+                    <strong>{% if application %}Demande approuvee{% else %}Activation sans demande liee{% endif %}</strong>
+                </div>
+            </div>
+
+            <form method="post" class="subject-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Matieres disponibles</label>
+                    <div class="subject-checkbox-list">
+                        {% for subject in allowed_subjects %}
+                            <label class="subject-checkbox-item">
+                                <input type="checkbox" name="subjects" value="{{ subject.id }}" {% if subject.id in selected_subject_ids %}checked{% endif %} {% if not application %}disabled{% endif %}>
+                                <span>
+                                    <strong>{{ subject.name }}</strong>
+                                    <small>{{ subject.study_year }}</small>
+                                </span>
+                            </label>
+                        {% empty %}
+                            <div class="tutor-empty-state">
+                                <i class="fa-regular fa-folder-open"></i>
+                                <p>Aucune matiere disponible. Verifiez votre filiere et votre annee dans le profil.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" class="save-subject-btn" {% if not application %}disabled{% endif %}>
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Enregistrer mes matieres
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
