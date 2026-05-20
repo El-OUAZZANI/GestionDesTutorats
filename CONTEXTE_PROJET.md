@@ -539,21 +539,3 @@ Les priorités sont :
 8. Matières enseignées
 9. Interface administrateur
 10. Design moderne et cohérent
-
-## 14. Instruction finale pour Codex
-
-Commence par analyser le projet sans modifier les fichiers.
-
-Ensuite, donne-moi :
-
-1. La structure du projet trouvée
-2. Les apps Django détectées
-3. Les modèles existants
-4. Les vues existantes
-5. Les routes existantes
-6. Les templates existants
-7. Les fonctionnalités déjà présentes
-8. Les fonctionnalités manquantes
-9. Un plan clair des prochaines modifications
-
-Après cette analyse, attends mon accord avant de modifier les fichiers.
