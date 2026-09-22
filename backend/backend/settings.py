@@ -10,10 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Set USE_SQLITE=1 in the environment (e.g. on PythonAnywhere) to run on a
+# bundled SQLite database instead of the local SQL Server instance.
+USE_SQLITE = os.environ.get("USE_SQLITE") == "1"
 
 
 # Quick-start development settings - unsuitable for production
@@ -80,16 +85,25 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-'default': {
-'ENGINE': 'django.db.backends.mysql',
-'NAME': 'gsttutorats',
-'USER':'root',
-'PASSWORD':'admin',
-'HOST':'localhost',
-'PORT':'3306',
-}
-}
+if USE_SQLITE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'mssql',
+            'NAME': 'GestionDesTutorats',
+            'HOST': r'localhost\SQLEXPRESS',
+            'OPTIONS': {
+                'driver': 'ODBC Driver 17 for SQL Server',
+                'trusted_connection': 'yes',
+            },
+        }
+    }
 
 
 # Password validation
@@ -132,8 +146,13 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "student_dashboard"
 LOGOUT_REDIRECT_URL = "login"
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+
+if os.environ.get("PYTHONANYWHERE_HOST"):
+    ALLOWED_HOSTS.append(os.environ["PYTHONANYWHERE_HOST"])

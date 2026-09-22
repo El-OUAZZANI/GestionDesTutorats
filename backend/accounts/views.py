@@ -1,6 +1,18 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.shortcuts import render, redirect
+
+User = get_user_model()
+
+
+def _authenticate_by_email(request, email, password):
+    if not email:
+        return None
+    try:
+        username = User.objects.get(email__iexact=email).get_username()
+    except User.DoesNotExist:
+        return None
+    return authenticate(request, username=username, password=password)
 
 
 def redirect_authenticated_user(user):
@@ -20,7 +32,7 @@ def login_view(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        user = authenticate(request, username=email, password=password)
+        user = _authenticate_by_email(request, email, password)
 
         if user is not None:
             profile = getattr(user, "profile", None)
@@ -49,7 +61,7 @@ def admin_login_view(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        user = authenticate(request, username=email, password=password)
+        user = _authenticate_by_email(request, email, password)
 
         if user is not None:
             profile = getattr(user, "profile", None)

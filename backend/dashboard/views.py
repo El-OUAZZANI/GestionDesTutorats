@@ -155,7 +155,10 @@ def year_rank(value):
 def allowed_subjects_for_profile(profile):
     if not profile.department or not profile.study_year:
         return Subject.objects.none()
-    return Subject.objects.filter(department=profile.department, study_year=profile.study_year)
+
+    max_rank = year_rank(profile.study_year)
+    allowed_years = [year for year in YEARS if year_rank(year) and year_rank(year) <= max_rank]
+    return Subject.objects.filter(department=profile.department, study_year__in=allowed_years)
 
 
 def teachable_subjects_for_profile(profile):
@@ -506,7 +509,7 @@ def reserve_availability_session(request, availability_id):
         django_messages.error(request, "Vous ne pouvez pas réserver une séance avec vous-même.")
         return redirect("search_tutors")
 
-    if subject.department != student_profile.department or subject.study_year != student_profile.study_year:
+    if not allowed_subjects_for_profile(student_profile).filter(id=subject.id).exists():
         django_messages.error(request, "Cette matière ne correspond pas à votre filière ou à votre niveau.")
         return redirect("search_tutors")
 

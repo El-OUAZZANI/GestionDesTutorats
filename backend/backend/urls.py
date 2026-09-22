@@ -7,7 +7,7 @@ from django.urls import path, include
 from dashboard.views import about, contact_admin, home
 
 urlpatterns = [
-    path('django-admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
 
     path("", home, name="home"),
     path("about/", about, name="about"),
