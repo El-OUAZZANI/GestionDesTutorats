@@ -25,12 +25,13 @@ USE_SQLITE = os.environ.get("USE_SQLITE") == "1"
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5lmsltg$)4^(5gfmrb@ob_(k%_!dwyo)0u$jg5n!h6td9hz&xu'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    'django-insecure-5lmsltg$)4^(5gfmrb@ob_(k%_!dwyo)0u$jg5n!h6td9hz&xu',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = os.environ.get("DEBUG", "1") == "1"
 
 
 # Application definition
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -148,6 +150,12 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "student_dashboard"
 LOGOUT_REDIRECT_URL = "login"
@@ -156,3 +164,16 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 if os.environ.get("PYTHONANYWHERE_HOST"):
     ALLOWED_HOSTS.append(os.environ["PYTHONANYWHERE_HOST"])
+
+if os.environ.get("RENDER_EXTERNAL_HOSTNAME"):
+    ALLOWED_HOSTS.append(os.environ["RENDER_EXTERNAL_HOSTNAME"])
+
+if os.environ.get("ADDITIONAL_ALLOWED_HOSTS"):
+    ALLOWED_HOSTS += os.environ["ADDITIONAL_ALLOWED_HOSTS"].split(",")
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    if os.environ.get("RENDER_EXTERNAL_HOSTNAME"):
+        CSRF_TRUSTED_ORIGINS = [f"https://{os.environ['RENDER_EXTERNAL_HOSTNAME']}"]
