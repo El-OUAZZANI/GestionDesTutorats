@@ -74,9 +74,19 @@ class Command(BaseCommand):
                       "first_name": "Admin", "last_name": "Plateforme"},
         )
         if created:
-            admin.set_password("Admin1234!")
+            admin.set_password("EmsiDemo2026!")
             admin.save()
-        Profile.objects.filter(user=admin).update(is_platform_admin=True)
+
+        platform_admin, created = User.objects.get_or_create(
+            username="platformadmin",
+            defaults={"email": "platformadmin@emsi.ma", "first_name": "Admin", "last_name": "Plateforme",
+                      "is_staff": False, "is_superuser": False},
+        )
+        if created:
+            platform_admin.set_password("EmsiDemo2026!")
+            platform_admin.save()
+        Profile.objects.filter(user=platform_admin).update(is_platform_admin=True)
+
         return admin
 
     def create_subjects(self):

@@ -88,6 +88,23 @@
                 </div>
             {% endif %}
 
+            <div class="demo-accounts">
+                <div class="demo-accounts-title">
+                    <i class="fa-solid fa-flask"></i>
+                    Site de démonstration — essayez avec un compte test
+                </div>
+                <div class="demo-accounts-grid">
+                    <button type="button" class="demo-account-btn" onclick="fillDemoAccount('tutor2@emsi.ma', 'Passer123!')">
+                        <strong>Compte tuteur</strong>
+                        <span>tutor2@emsi.ma</span>
+                    </button>
+                    <button type="button" class="demo-account-btn" onclick="fillDemoAccount('student3@emsi.ma', 'Passer123!')">
+                        <strong>Compte étudiant</strong>
+                        <span>student3@emsi.ma</span>
+                    </button>
+                </div>
+            </div>
+
             <form method="POST" class="login-form">
                 {% csrf_token %}
 
@@ -173,6 +190,11 @@
 </div>
 
 <script>
+    function fillDemoAccount(email, password) {
+        document.getElementById("email").value = email;
+        document.getElementById("password").value = password;
+    }
+
     function togglePassword() {
         const passwordInput = document.getElementById("password");
         const eyeIcon = document.getElementById("eyeIcon");

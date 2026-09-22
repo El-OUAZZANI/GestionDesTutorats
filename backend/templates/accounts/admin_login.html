@@ -75,6 +75,19 @@
                 </div>
             {% endif %}
 
+            <div class="demo-accounts">
+                <div class="demo-accounts-title">
+                    <i class="fa-solid fa-flask"></i>
+                    Site de démonstration — essayez le compte admin test
+                </div>
+                <div class="demo-accounts-grid">
+                    <button type="button" class="demo-account-btn" onclick="fillDemoAccount('platformadmin@emsi.ma', 'EmsiDemo2026!')" style="grid-column: 1 / -1;">
+                        <strong>Compte admin plateforme</strong>
+                        <span>platformadmin@emsi.ma</span>
+                    </button>
+                </div>
+            </div>
+
             <form method="POST" class="login-form">
                 {% csrf_token %}
 
@@ -125,6 +138,11 @@
 </div>
 
 <script>
+    function fillDemoAccount(email, password) {
+        document.getElementById("email").value = email;
+        document.getElementById("password").value = password;
+    }
+
     function togglePassword() {
         const passwordInput = document.getElementById("password");
         const eyeIcon = document.getElementById("eyeIcon");

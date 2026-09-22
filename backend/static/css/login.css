@@ -367,6 +367,60 @@ body {
     font-size: 14px;
 }
 
+.demo-accounts {
+    background: #f4f8ff;
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 22px;
+}
+
+.demo-accounts-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #065ee8;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.demo-accounts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.demo-account-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    background: #fff;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.18s ease;
+}
+
+.demo-account-btn:hover {
+    border-color: #065ee8;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(6, 94, 232, 0.12);
+}
+
+.demo-account-btn strong {
+    font-size: 13px;
+    color: #071633;
+}
+
+.demo-account-btn span {
+    font-size: 11px;
+    color: #7c8aa5;
+}
+
 .admin-note {
     display: flex;
     gap: 13px;
