@@ -23,7 +23,7 @@ SUBJECTS_BY_DEPARTMENT = {
     DEPARTMENTS[2]: ["Gestion de production", "Qualité industrielle", "Logistique", "Supply chain"],
 }
 
-FIRST_NAMES = ["Yassine", "Sara", "Mehdi", "Imane", "Amine", "Khadija", "Youssef", "Salma", "Omar", "Fatima Zahra",
+FIRST_NAMES = ["Yassine", "Karim", "Mehdi", "Imane", "Amine", "Khadija", "Youssef", "Salma", "Omar", "Fatima Zahra",
                "Hamza", "Nour", "Anas", "Rania", "Zakaria", "Meryem", "Ilyas", "Hiba", "Soufiane", "Lina"]
 LAST_NAMES = ["El Amrani", "Bennani", "Tazi", "Idrissi", "Fassi", "Alaoui", "Chraibi", "Benjelloun", "Cherkaoui",
               "Lahlou", "Zahidi", "Benali", "Raji", "Sbai", "Moutawakil"]
